@@ -5,6 +5,8 @@ const navItems = [
   { to: "/admin/dashboard", label: "Dashboard", exact: true },
   { to: "/admin/fila", label: "Fila de revisão" },
   { to: "/admin/talentos", label: "People", exact: true },
+  { to: "/admin/alocados", label: "Alocados", exact: true },
+  { to: "/admin/forms", label: "Forms", exact: true },
 ];
 
 export default function AdminLayout() {
