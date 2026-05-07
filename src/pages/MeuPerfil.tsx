@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useAuth } from "@/contexts/AuthContext";
 import { api } from "@/lib/api";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -110,8 +108,6 @@ const EXPERIENCE_OPTIONS = [
 ];
 
 export default function MeuPerfil() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -120,7 +116,7 @@ export default function MeuPerfil() {
     resolver: zodResolver(schema),
   });
 
- useEffect(() => {
+  useEffect(() => {
   api.getMyProfile()
     .then((p) => {
       setProfile(p);
@@ -150,7 +146,7 @@ export default function MeuPerfil() {
       }
     })
     .finally(() => setLoading(false));
-}, [reset]);
+  }, [reset]);
 
   async function onSubmit(data: FormData) {
     const skillList = (data.skills ?? "")
@@ -169,25 +165,17 @@ export default function MeuPerfil() {
   const isPendente = profile?.status === "PENDENTE";
 
   return (
-    <div className="min-h-screen bg-[var(--bg)]">
-      <header className="bg-white border-b border-gray-200 flex items-center justify-between px-8 py-4">
-        <div className="flex items-center gap-1.5">
-          <span style={{ fontFamily: "var(--font-syne)", fontWeight: 800, color: "var(--sidebar-bg)", fontSize: 18 }}>VILT</span>
-          <span style={{ color: "var(--pink)", fontSize: 18, fontWeight: 900 }}>›</span>
-          <span className="text-sm text-gray-400 ml-2">Meu Perfil</span>
-        </div>
-        <div className="flex items-center gap-4">
-          {profile && (
-            <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${isAtivo ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
-              {isAtivo ? "Ativo no banco de talentos" : "Aguardando revisão"}
-            </span>
-          )}
-          <span className="text-sm text-gray-500">{user?.name}</span>
-          <Button variant="ghost" size="sm" onClick={() => { logout(); navigate("/login"); }}>Sair</Button>
-        </div>
-      </header>
+    <div className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-xl font-bold text-gray-900" style={{ fontFamily: "var(--font-syne)" }}>Meu Perfil</h1>
+        {profile && (
+          <span className={`mt-1 inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${isAtivo ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"}`}>
+            {isAtivo ? "Ativo no banco de talentos" : "Aguardando revisão"}
+          </span>
+        )}
+      </div>
 
-      <main className="max-w-3xl mx-auto px-4 py-8">
+      <div>
         {loading ? (
           <p className="text-gray-400 text-sm">Carregando...</p>
         ) : isPendente || isAtivo ? (
@@ -265,7 +253,7 @@ export default function MeuPerfil() {
             </div>
           </form>
         )}
-      </main>
+      </div>
     </div>
   );
 }
@@ -285,7 +273,7 @@ function ProfileReadOnly({ profile }: { profile: any }) {
       <div className="bg-white rounded-xl border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-1">
           <h2 className="text-base font-semibold text-gray-900" style={{ fontFamily: "var(--font-syne)" }}>
-            {isAtivo ? "Seu perfil está ativo no banco de talentos 🎉" : "Perfil enviado — aguardando revisão do RH"}
+            {isAtivo ? "Seu perfil está ativo no banco de talentos" : "Perfil enviado — aguardando revisão do RH"}
           </h2>
           <div className="flex items-center gap-2">
             {ns && nivel && (
