@@ -120,32 +120,37 @@ export default function MeuPerfil() {
     resolver: zodResolver(schema),
   });
 
-  useEffect(() => {
-    api.getMyProfile()
-      .then((p) => {
-        setProfile(p);
-        reset({
-          photoUrl: p.photoUrl ?? "",
-          cargo: p.cargo ?? "",
-          area: p.area ?? "",
-          sobre: p.sobre ?? "",
-          prontidaoStack: p.prontidaoStack ?? "",
-          alocacaoStatus: p.alocacaoStatus ?? "",
-          nivelMentoria: p.nivelMentoria ?? 1,
-          autonomia: p.autonomia ?? "",
-          trilhaCarreira: p.trilhaCarreira ?? "",
-          certificacoesCount: p.certificacoesCount ?? "",
-          nivelAcompanhamento: p.nivelAcompanhamento ?? "",
-          experienceYears: p.experienceYears ?? "",
-          codeReviewAtuacao: p.codeReviewAtuacao ?? "",
-          linkedinUrl: p.linkedinUrl ?? "",
-          githubUrl: p.githubUrl ?? "",
-          skills: p.skills?.map((ps: any) => ps.skill?.name).join(", ") ?? "",
-        });
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, [reset]);
+ useEffect(() => {
+  api.getMyProfile()
+    .then((p) => {
+      setProfile(p);
+      reset({
+        photoUrl: p.photoUrl ?? "",
+        cargo: p.cargo ?? "",
+        area: p.area ?? "",
+        sobre: p.sobre ?? "",
+        prontidaoStack: p.prontidaoStack ?? "",
+        alocacaoStatus: p.alocacaoStatus ?? "",
+        nivelMentoria: p.nivelMentoria ?? 1,
+        autonomia: p.autonomia ?? "",
+        trilhaCarreira: p.trilhaCarreira ?? "",
+        certificacoesCount: p.certificacoesCount ?? "",
+        nivelAcompanhamento: p.nivelAcompanhamento ?? "",
+        experienceYears: p.experienceYears ?? "",
+        codeReviewAtuacao: p.codeReviewAtuacao ?? "",
+        linkedinUrl: p.linkedinUrl ?? "",
+        githubUrl: p.githubUrl ?? "",
+        skills: p.skills?.map((ps: any) => ps.skill?.name).join(", ") ?? "",
+      });
+    })
+    .catch((err) => {
+      if (err.response?.status === 404) {
+      } else if (err.response?.status === 401) {
+        console.error("Token inválido ao buscar perfil");
+      }
+    })
+    .finally(() => setLoading(false));
+}, [reset]);
 
   async function onSubmit(data: FormData) {
     const skillList = (data.skills ?? "")
