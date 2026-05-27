@@ -13,14 +13,14 @@ const schema = z.object({
   area: z.string().min(1, "Obrigatório"),
   sobre: z.string().optional(),
   prontidaoStack: z.string().optional(),
-  alocacaoStatus: z.string().min(1, "Obrigatório"),
+  alocacaoStatus: z.string().optional(),
   nivelMentoria: z.coerce.number().min(1).max(4).optional(),
   experienceYears: z.coerce.number().optional(),
   codeReviewAtuacao: z.string().optional(),
   autonomia: z.string().optional(),
   trilhaCarreira: z.string().optional(),
   certificacoesCount: z.string().optional(),
-  nivelAcompanhamento: z.string().min(1, "Obrigatório"),
+  nivelAcompanhamento: z.string().optional(),
   linkedinUrl: z.string().optional(),
   githubUrl: z.string().optional(),
   skills: z.string().optional(),
@@ -45,13 +45,13 @@ const PRONTIDAO_OPTIONS = [
   { value: "Explorador — estudando novas tecnologias para transição", label: "Explorador — em transição" },
 ];
 
-const ALOCACAO_OPTIONS = [
-  { value: "", label: "Selecione..." },
-  { value: "Alocado Integral (100%)", label: "Alocado Integral (100%)" },
-  { value: "Alocado Parcial", label: "Alocado Parcial" },
-  { value: "Disponível (Bench)", label: "Disponível (Bench)" },
-  { value: "Em Transição (saindo de projeto)", label: "Em Transição (saindo de projeto)" },
-];
+// const ALOCACAO_OPTIONS = [
+//   { value: "", label: "Selecione..." },
+//   { value: "Alocado Integral (100%)", label: "Alocado Integral (100%)" },
+//   { value: "Alocado Parcial", label: "Alocado Parcial" },
+//   { value: "Disponível (Bench)", label: "Disponível (Bench)" },
+//   { value: "Em Transição (saindo de projeto)", label: "Em Transição (saindo de projeto)" },
+// ];
 
 const AUTONOMIA_OPTIONS = [
   { value: "", label: "Selecione..." },
@@ -61,13 +61,13 @@ const AUTONOMIA_OPTIONS = [
   { value: "Proativa — além de autônomo, proponho melhorias em processos e arquitetura", label: "Proativa — proponho melhorias" },
 ];
 
-const TRILHA_OPTIONS = [
-  { value: "", label: "Selecione..." },
-  { value: "Especialista Técnico (Carreira em Y)", label: "Especialista Técnico (Carreira em Y)" },
-  { value: "Liderança de Pessoas (Gestão)", label: "Liderança de Pessoas (Gestão)" },
-  { value: "Produto / Negócio (Product Engineer)", label: "Produto / Negócio" },
-  { value: "Generalista", label: "Generalista" },
-];
+// const TRILHA_OPTIONS = [
+//   { value: "", label: "Selecione..." },
+//   { value: "Especialista Técnico (Carreira em Y)", label: "Especialista Técnico (Carreira em Y)" },
+//   { value: "Liderança de Pessoas (Gestão)", label: "Liderança de Pessoas (Gestão)" },
+//   { value: "Produto / Negócio (Product Engineer)", label: "Produto / Negócio" },
+//   { value: "Generalista", label: "Generalista" },
+// ];
 
 const CERT_OPTIONS = [
   { value: "", label: "Selecione..." },
@@ -77,13 +77,13 @@ const CERT_OPTIONS = [
   { value: "Mais de 5", label: "Mais de 5" },
 ];
 
-const ACOMPANHAMENTO_OPTIONS = [
-  { value: "", label: "Selecione..." },
-  { value: "Independente — me organizo bem, check-ins pontuais são suficientes", label: "Independente — check-ins pontuais" },
-  { value: "Padrão — acompanhamento regular de sprint/ciclo atende minhas necessidades", label: "Padrão — acompanhamento de sprint" },
-  { value: "Próximo — prefiro contato mais frequente para alinhar direção e prioridades", label: "Próximo — contato frequente" },
-  { value: "Intensivo — estou em adaptação ou momento de desafio, preciso de suporte frequente", label: "Intensivo — suporte frequente" },
-];
+// const ACOMPANHAMENTO_OPTIONS = [
+//   { value: "", label: "Selecione..." },
+//   { value: "Independente — me organizo bem, check-ins pontuais são suficientes", label: "Independente — check-ins pontuais" },
+//   { value: "Padrão — acompanhamento regular de sprint/ciclo atende minhas necessidades", label: "Padrão — acompanhamento de sprint" },
+//   { value: "Próximo — prefiro contato mais frequente para alinhar direção e prioridades", label: "Próximo — contato frequente" },
+//   { value: "Intensivo — estou em adaptação ou momento de desafio, preciso de suporte frequente", label: "Intensivo — suporte frequente" },
+// ];
 
 const MENTORIA_OPTIONS = [
   { value: "1", label: "1 — Nunca / Individual" },
@@ -117,35 +117,35 @@ export default function MeuPerfil() {
   });
 
   useEffect(() => {
-  api.getMyProfile()
-    .then((p) => {
-      setProfile(p);
-      reset({
-        photoUrl: p.photoUrl ?? "",
-        cargo: p.cargo ?? "",
-        area: p.area ?? "",
-        sobre: p.sobre ?? "",
-        prontidaoStack: p.prontidaoStack ?? "",
-        alocacaoStatus: p.alocacaoStatus ?? "",
-        nivelMentoria: p.nivelMentoria ?? 1,
-        autonomia: p.autonomia ?? "",
-        trilhaCarreira: p.trilhaCarreira ?? "",
-        certificacoesCount: p.certificacoesCount ?? "",
-        nivelAcompanhamento: p.nivelAcompanhamento ?? "",
-        experienceYears: p.experienceYears ?? "",
-        codeReviewAtuacao: p.codeReviewAtuacao ?? "",
-        linkedinUrl: p.linkedinUrl ?? "",
-        githubUrl: p.githubUrl ?? "",
-        skills: p.skills?.map((ps: any) => ps.skill?.name).join(", ") ?? "",
-      });
-    })
-    .catch((err) => {
-      if (err.response?.status === 404) {
-      } else if (err.response?.status === 401) {
-        console.error("Token inválido ao buscar perfil");
-      }
-    })
-    .finally(() => setLoading(false));
+    api.getMyProfile()
+      .then((p) => {
+        setProfile(p);
+        reset({
+          photoUrl: p.photoUrl ?? "",
+          cargo: p.cargo ?? "",
+          area: p.area ?? "",
+          sobre: p.sobre ?? "",
+          prontidaoStack: p.prontidaoStack ?? "",
+          alocacaoStatus: p.alocacaoStatus ?? "",
+          nivelMentoria: p.nivelMentoria ?? 1,
+          autonomia: p.autonomia ?? "",
+          trilhaCarreira: p.trilhaCarreira ?? "",
+          certificacoesCount: p.certificacoesCount ?? "",
+          nivelAcompanhamento: p.nivelAcompanhamento ?? "",
+          experienceYears: p.experienceYears ?? "",
+          codeReviewAtuacao: p.codeReviewAtuacao ?? "",
+          linkedinUrl: p.linkedinUrl ?? "",
+          githubUrl: p.githubUrl ?? "",
+          skills: p.skills?.map((ps: any) => ps.skill?.name).join(", ") ?? "",
+        });
+      })
+      .catch((err) => {
+        if (err.response?.status === 404) {
+        } else if (err.response?.status === 401) {
+          console.error("Token inválido ao buscar perfil");
+        }
+      })
+      .finally(() => setLoading(false));
   }, [reset]);
 
   async function onSubmit(data: FormData) {
@@ -216,7 +216,6 @@ export default function MeuPerfil() {
 
             {/* Seção 3 — Alocação e Potencial */}
             <Section title="Alocação e Potencial">
-              <Select label="Situação atual de alocação *" options={ALOCACAO_OPTIONS} {...register("alocacaoStatus")} error={errors.alocacaoStatus?.message} />
               <div>
                 <label className="text-xs font-medium text-gray-600 block mb-1.5">
                   Com que frequência você atua como mentor ou referência técnica?
@@ -224,7 +223,7 @@ export default function MeuPerfil() {
                 <div className="flex gap-3">
                   {MENTORIA_OPTIONS.map((o) => (
                     <label key={o.value} className="flex-1 cursor-pointer">
-                      <input type="radio" value={o.value} {...register("nivelMentoria")} className="sr-only peer" />
+                      <input type="radio" value={o.value} {...register("nivelMentoria")} className="hidden peer" />
                       <div className="text-center py-2 px-1 rounded-lg border border-gray-200 text-xs text-gray-500 peer-checked:border-pink-500 peer-checked:bg-pink-50 peer-checked:text-pink-600 transition-all">
                         {o.label}
                       </div>
@@ -233,9 +232,7 @@ export default function MeuPerfil() {
                 </div>
               </div>
               <Select label="Autonomia na entrega ponta a ponta" options={AUTONOMIA_OPTIONS} {...register("autonomia")} />
-              <Select label="Principal foco de crescimento no próximo ciclo" options={TRILHA_OPTIONS} {...register("trilhaCarreira")} />
               <Select label="Certificações concluídas nos últimos 12 meses" options={CERT_OPTIONS} {...register("certificacoesCount")} />
-              <Select label="Nível de acompanhamento necessário *" options={ACOMPANHAMENTO_OPTIONS} {...register("nivelAcompanhamento")} error={errors.nivelAcompanhamento?.message} />
               <Select label="Atuação em code review" options={CODE_REVIEW_OPTIONS} {...register("codeReviewAtuacao")} />
             </Section>
 
@@ -294,12 +291,9 @@ function ProfileReadOnly({ profile }: { profile: any }) {
         <div className="p-6 grid grid-cols-2 gap-4">
           <ReadField label="Cargo" value={profile.cargo} />
           <ReadField label="Área" value={profile.area} />
-          <ReadField label="Alocação" value={profile.alocacaoStatus} />
           <ReadField label="Autonomia" value={profile.autonomia} />
-          <ReadField label="Trilha de carreira" value={profile.trilhaCarreira} />
           <ReadField label="Certificações (12m)" value={profile.certificacoesCount} />
           <ReadField label="Prontidão de stack" value={profile.prontidaoStack} />
-          <ReadField label="Acompanhamento" value={profile.nivelAcompanhamento} />
           {profile.nivelMentoria && <ReadField label="Frequência de mentoria" value={`${profile.nivelMentoria}/4`} />}
           {profile.experienceYears != null && <ReadField label="Anos de experiência" value={profile.experienceYears >= 6 ? "6 anos ou mais" : profile.experienceYears >= 3 ? "3 a 5 anos" : profile.experienceYears >= 1 ? "1 a 2 anos" : "Menos de 1 ano"} />}
           <ReadField label="Code review" value={profile.codeReviewAtuacao} />
