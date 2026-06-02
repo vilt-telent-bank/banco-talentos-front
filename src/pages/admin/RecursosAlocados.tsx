@@ -23,7 +23,7 @@ export default function RecursosAlocados() {
         const all = Array.isArray(data) ? data : [];
         setProfiles(all.filter((p) => STATUS_ALOCADO.has(p.alocacaoStatus)));
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -33,15 +33,15 @@ export default function RecursosAlocados() {
     const q = search.toLowerCase();
     return (
       (!q || p.user?.name?.toLowerCase().includes(q) || p.area?.toLowerCase().includes(q) ||
-        p.cargo?.toLowerCase().includes(q) || p.skills?.some((s: any) => s.skill?.name?.toLowerCase().includes(q))) &&
+        p.skills?.some((s: any) => s.skill?.name?.toLowerCase().includes(q))) &&
       (!area || p.area === area) &&
       (!statusFilter || p.alocacaoStatus === statusFilter)
     );
   }), [profiles, search, area, statusFilter]);
 
   const counts = useMemo(() => ({
-    integral:  profiles.filter((p) => p.alocacaoStatus === "Alocado Integral (100%)").length,
-    parcial:   profiles.filter((p) => p.alocacaoStatus === "Alocado Parcial").length,
+    integral: profiles.filter((p) => p.alocacaoStatus === "Alocado Integral (100%)").length,
+    parcial: profiles.filter((p) => p.alocacaoStatus === "Alocado Parcial").length,
     transicao: profiles.filter((p) => p.alocacaoStatus === "Em Transição (saindo de projeto)").length,
   }), [profiles]);
 
@@ -113,13 +113,13 @@ export default function RecursosAlocados() {
               id={p.id}
               name={p.user?.name ?? "?"}
               email={p.user?.email}
-              cargo={p.cargo}
               photoUrl={p.photoUrl}
               area={p.area}
               nivel={p.nivelOverride ?? p.nivel}
               alocacaoStatus={p.alocacaoStatus}
               skills={p.skills}
               createdAt={p.createdAt}
+              registrationStatus={p.registrationStatus}
             />
           ))}
         </div>

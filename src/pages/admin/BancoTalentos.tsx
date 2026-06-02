@@ -13,7 +13,7 @@ export default function BancoTalentos() {
   useEffect(() => {
     api.getAtivos()
       .then((data) => setProfiles(Array.isArray(data) ? data : []))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, []);
 
@@ -24,7 +24,7 @@ export default function BancoTalentos() {
     const q = search.toLowerCase();
     return (
       (!q || p.user?.name?.toLowerCase().includes(q) || p.area?.toLowerCase().includes(q) ||
-        p.cargo?.toLowerCase().includes(q) || p.skills?.some((s: any) => s.skill?.name?.toLowerCase().includes(q))) &&
+        p.skills?.some((s: any) => s.skill?.name?.toLowerCase().includes(q))) &&
       (!area || p.area === area)
     );
   }), [disponíveis, search, area]);
@@ -33,7 +33,7 @@ export default function BancoTalentos() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title="People" subtitle="Talentos disponíveis (bench)" />
+      <PageHeader title="Recursos" subtitle="Talentos disponíveis (bench)" />
 
       {/* Filtros */}
       <Card padding="sm" className="flex items-center gap-4 flex-wrap">
@@ -69,13 +69,13 @@ export default function BancoTalentos() {
               id={p.id}
               name={p.user?.name ?? "?"}
               email={p.user?.email}
-              cargo={p.cargo}
               photoUrl={p.photoUrl}
               area={p.area}
               nivel={p.nivelOverride ?? p.nivel}
               alocacaoStatus={p.alocacaoStatus}
               skills={p.skills}
               createdAt={p.createdAt}
+              registrationStatus={p.registrationStatus}
             />
           ))}
         </div>
