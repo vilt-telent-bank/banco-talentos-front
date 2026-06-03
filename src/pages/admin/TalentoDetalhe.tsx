@@ -10,6 +10,7 @@ import {
   NIVEL_OPTIONS, NIVEL_STYLE, AREA_OPTIONS, ALOCACAO_OPTIONS,
   TRILHA_OPTIONS, EXPERIENCE_OPTIONS, REGISTRATION_STATUS_OPTIONS, SOFTSKILLS_LIST
 } from "@/constants/profile";
+import { Section } from "@/components/ui/Section";
 
 export default function TalentoDetalhe() {
   const { id } = useParams<{ id: string }>();
@@ -51,7 +52,6 @@ export default function TalentoDetalhe() {
         </Link>
       </div>
 
-      {/* Header */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
         <Avatar name={profile.user?.name ?? "?"} photoUrl={profile.photoUrl} size={56} />
 
@@ -124,7 +124,6 @@ export default function TalentoDetalhe() {
           </Section>
 
           <Section title="Avaliação de Soft Skills (Admin)">
-            {/* Mantido o info de legendas idêntico... */}
             <div className="bg-slate-50 border border-slate-100 rounded-lg p-4 mb-5">
               <p className="text-xs font-semibold text-slate-600 mb-2 uppercase tracking-wider">Legenda da Escala (1 a 10)</p>
               <ul className="text-xs text-slate-500 space-y-1">
@@ -184,7 +183,6 @@ export default function TalentoDetalhe() {
             )}
           </Section>
 
-          {/* Área de Ações */}
           <div className="flex flex-wrap items-center gap-3 pt-4">
             {isPendente && (
               <Button
@@ -212,18 +210,6 @@ export default function TalentoDetalhe() {
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-// Sub-componente wrapper que pode ser movido futuramente para src/components/ui/Section.tsx
-function Section({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="bg-white rounded-xl border border-gray-200">
-      <div className="px-5 py-3 border-b border-gray-100">
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">{title}</p>
-      </div>
-      <div className="p-5 flex flex-col gap-4">{children}</div>
     </div>
   );
 }
