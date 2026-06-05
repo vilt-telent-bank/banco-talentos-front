@@ -1,8 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
-import { api } from "@/lib/api";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { PersonCard } from "@/components/ui/PersonCard";
-import { Card } from "@/components/ui/Card";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { PageHeader, Card } from "@/components/ui";
+import { PersonCard, profilesApi, type UserProfile } from "@/features/profiles";
 
 const STATUS_ALOCADO = new Set([
   "Alocado Integral (100%)",
@@ -11,21 +10,18 @@ const STATUS_ALOCADO = new Set([
 ]);
 
 export default function RecursosAlocados() {
-  const [profiles, setProfiles] = useState<any[]>([]);
   const [search, setSearch] = useState("");
   const [area, setArea] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api.getAtivos()
-      .then((data) => {
-        const all = Array.isArray(data) ? data : [];
-        setProfiles(all.filter((p) => STATUS_ALOCADO.has(p.alocacaoStatus)));
-      })
-      .catch(() => { })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
+    queryKey: ['profiles-ativos-alocados'],
+    queryFn: async () => {
+      const data = await profilesApi.getAtivos();
+      const all = Array.isArray(data) ? data : [];
+      return all.filter((p) => STATUS_ALOCADO.has(p.alocacaoStatus));
+    }
+  });
 
   const areas = useMemo(() => Array.from(new Set(profiles.map((p) => p.area).filter(Boolean))), [profiles]);
 
@@ -33,7 +29,7 @@ export default function RecursosAlocados() {
     const q = search.toLowerCase();
     return (
       (!q || p.user?.name?.toLowerCase().includes(q) || p.area?.toLowerCase().includes(q) ||
-        p.skills?.some((s: any) => s.skill?.name?.toLowerCase().includes(q))) &&
+        p.skills?.some((s: any) => (s.skill?.name || s.name)?.toLowerCase().includes(q))) &&
       (!area || p.area === area) &&
       (!statusFilter || p.alocacaoStatus === statusFilter)
     );

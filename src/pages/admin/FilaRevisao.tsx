@@ -1,22 +1,16 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { api } from "@/lib/api";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Badge } from "@/components/ui/Badge";
-import { Tag } from "@/components/ui/Tag";
-import { Avatar } from "@/components/ui/Avatar";
-import { Card } from "@/components/ui/Card";
+import { PageHeader, Badge, Tag, Avatar, Card } from "@/components/ui";
+import { profilesApi, type UserProfile } from "@/features/profiles";
+import { useQuery } from "@tanstack/react-query";
 
 export default function FilaRevisao() {
-  const [profiles, setProfiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    api.getPendentes()
-      .then((data) => setProfiles(Array.isArray(data) ? data : []))
-      .catch(() => { })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
+    queryKey: ['profiles-pendentes'],
+    queryFn: async () => {
+      const data = await profilesApi.getPendentes();
+      return Array.isArray(data) ? data : [];
+    }
+  });
 
   if (loading) return <p className="text-slate-400 text-sm">Carregando...</p>;
 
@@ -54,7 +48,7 @@ export default function FilaRevisao() {
                 </div>
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-xs text-slate-400">
-                    {new Date(p.createdAt).toLocaleDateString("pt-BR")}
+                    {p.createdAt ? new Date(p.createdAt).toLocaleDateString("pt-BR") : ""}
                   </span>
                   <Badge variant="pending">Aguardando revisão →</Badge>
                 </div>
@@ -75,11 +69,14 @@ export default function FilaRevisao() {
                 )}
               </div>
 
-              {p.skills?.length > 0 && (
+              {p.skills && p.skills.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {p.skills.map((ps: any, i: number) => (
                     <Tag key={i} kind="skill">
-                      {ps.skill?.name}{(ps.proficiencyLevel ?? ps.level) && <span className="text-slate-400 ml-1">· {ps.proficiencyLevel ?? ps.level}</span>}
+                      {ps.skill?.name || ps.name}
+                      {(ps.proficiencyLevel ?? ps.level) && (
+                        <span className="text-slate-400 ml-1">· {ps.proficiencyLevel ?? ps.level}</span>
+                      )}
                     </Tag>
                   ))}
                 </div>

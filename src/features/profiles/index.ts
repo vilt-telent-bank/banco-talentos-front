@@ -1,0 +1,17 @@
+// Exporta Componentes
+export * from "./components/PersonCard";
+export * from "./components/ProfileReadOnly";
+export * from "./components/StackInput";
+export * from "./components/BancoTalentosList";
+
+// Exporta Constantes e Tipos
+export * from "./profile";
+export * from "./types/profile";
+
+// Exporta Utilitários, Hooks e API
+export * from "./utils/profileUtils";
+export * from "./hooks/useMeuPerfil";
+export * from "./hooks/useTalentoDetalhe";
+export * from "./hooks/useDashboardStats";
+export * from "./api/profiles.api";
+export * from "./hooks/useBancoTalentos";

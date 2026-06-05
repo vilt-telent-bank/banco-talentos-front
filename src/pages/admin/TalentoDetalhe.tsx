@@ -1,16 +1,19 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { StackInput } from "@/components/ui/StackInput";
-import { Button } from "@/components/ui/Button";
-import { Avatar } from "@/components/ui/Avatar";
-import { Input } from "@/components/ui/Input";
-import { Select } from "@/components/ui/Select";
-import { useTalentoDetalhe } from "./hooks/useTalentoDetalhe";
+import { Button, Avatar, Input, Select, Section } from "@/components/ui";
 import {
-  NIVEL_OPTIONS, NIVEL_STYLE, AREA_OPTIONS, ALOCACAO_OPTIONS,
-  TRILHA_OPTIONS, EXPERIENCE_OPTIONS, REGISTRATION_STATUS_OPTIONS, SOFTSKILLS_LIST
-} from "@/constants/profile";
-import { Section } from "@/components/ui/Section";
+  StackInput,
+  useTalentoDetalhe,
+  NIVEL_OPTIONS,
+  NIVEL_STYLE,
+  AREA_OPTIONS,
+  ALOCACAO_OPTIONS,
+  TRILHA_OPTIONS,
+  EXPERIENCE_OPTIONS,
+  REGISTRATION_STATUS_OPTIONS,
+  SOFTSKILLS_LIST
+} from "@/features/profiles";
+
 
 export default function TalentoDetalhe() {
   const { id } = useParams<{ id: string }>();
