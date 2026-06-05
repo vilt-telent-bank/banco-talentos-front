@@ -1,18 +1,19 @@
 interface Props {
-  variant: "senior" | "pleno" | "junior" | "success" | "info" | "warning" | "alert" | "pending";
+  variant: "senior" | "pleno" | "junior" | "success" | "info" | "warning" | "alert" | "pending" | "danger";
   children: React.ReactNode;
   className?: string;
 }
 
 const styles: Record<Props["variant"], string> = {
-  senior: "bg-[#FEF9C3] text-[#854D0E]",
-  pleno: "bg-[#DCFCE7] text-[#166534]",
-  junior: "bg-[#EFF6FF] text-[#1E40AF]",
-  success: "bg-[#DCFCE7] text-[#166534]",
-  info: "bg-[#DBEAFE] text-[#1E40AF]",
-  warning: "bg-[#FEF9C3] text-[#92400E]",
-  alert: "bg-[#FEF3C7] text-[#B45309]",
-  pending: "bg-amber-100 text-amber-700",
+  senior: "bg-status-warning-bg text-status-warning-text",
+  pleno: "bg-status-success-bg text-status-success-text",
+  junior: "bg-status-info-bg text-status-info-text",
+  success: "bg-status-success-bg text-status-success-text",
+  info: "bg-status-info-bg text-status-info-text",
+  warning: "bg-status-warning-bg text-status-warning-text",
+  alert: "bg-status-alert-bg text-status-alert-text",
+  danger: "bg-status-danger-bg text-status-danger-text",
+  pending: "bg-status-pending-bg text-status-pending-text",
 };
 
 export function Badge({ variant, children, className = "" }: Props) {

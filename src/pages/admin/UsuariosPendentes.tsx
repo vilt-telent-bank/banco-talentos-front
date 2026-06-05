@@ -1,62 +1,50 @@
-import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
-import { PageHeader } from "@/components/ui/PageHeader";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
+import { useState } from "react";
+import { PageHeader, Badge, Button, Card } from "@/components/ui";
+import { profilesApi } from "@/features/profiles";
+import { UserRole } from "@/features/auth";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface PendingUser {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "RECURSO";
+  role: UserRole;
   status: string;
   emailVerified: boolean;
   createdAt: string;
 }
 
 export default function UsuariosPendentes() {
-  const [users, setUsers] = useState<PendingUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
   const [actionId, setActionId] = useState<string | null>(null);
-  const [error, setError] = useState("");
 
-  async function load() {
-    setLoading(true);
-    try {
-      const data = await api.getPendingUsers();
-      setUsers(data);
-    } catch {
-      setError("Não foi possível carregar os usuários pendentes.");
-    } finally {
-      setLoading(false);
-    }
+  const { data: users = [] as PendingUser[], isLoading: loading, isError } = useQuery({
+    queryKey: ['usuarios-pendentes'],
+    queryFn: profilesApi.getPendingUsers,
+  });
+
+  const approveMutation = useMutation({
+    mutationFn: profilesApi.approveUser,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['usuarios-pendentes'] }),
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: profilesApi.rejectUser,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['usuarios-pendentes'] }),
+  });
+
+  const error = isError ? "Não foi possível carregar os usuários pendentes." : 
+                (approveMutation.isError ? "Erro ao aprovar usuário." : 
+                (rejectMutation.isError ? "Erro ao rejeitar usuário." : ""));
+
+  function handleApprove(id: string) {
+    setActionId(id);
+    approveMutation.mutate(id, { onSettled: () => setActionId(null) });
   }
 
-  useEffect(() => { load(); }, []);
-
-  async function handleApprove(id: string) {
+  function handleReject(id: string) {
     setActionId(id);
-    try {
-      await api.approveUser(id);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch {
-      setError("Erro ao aprovar usuário.");
-    } finally {
-      setActionId(null);
-    }
-  }
-
-  async function handleReject(id: string) {
-    setActionId(id);
-    try {
-      await api.rejectUser(id);
-      setUsers((prev) => prev.filter((u) => u.id !== id));
-    } catch {
-      setError("Erro ao rejeitar usuário.");
-    } finally {
-      setActionId(null);
-    }
+    rejectMutation.mutate(id, { onSettled: () => setActionId(null) });
   }
 
   return (
@@ -75,13 +63,13 @@ export default function UsuariosPendentes() {
         </Card>
       ) : (
         <div className="flex flex-col gap-3">
-          {users.map((u) => (
+          {users.map((u: any) => (
             <div key={u.id} className="bg-white border border-slate-200 rounded-xl shadow-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div className="flex-1 min-w-0 w-full">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-sm text-slate-900 truncate">{u.name}</span>
-                  <Badge variant={u.role === "ADMIN" ? "warning" : "success"}>
-                    {u.role === "ADMIN" ? "Admin" : "Recurso"}
+                  <Badge variant={u.role === UserRole.ADMIN ? "warning" : "success"}>
+                    {u.role === UserRole.ADMIN ? "Admin" : "Recurso"}
                   </Badge>
                   {!u.emailVerified && (
                     <Badge variant="alert">E-mail não verificado</Badge>

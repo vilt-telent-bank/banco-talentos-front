@@ -1,4 +1,4 @@
-import { PageHeader } from "@/components/ui/PageHeader";
+import { PageHeader } from "@/components/ui";
 
 const FORM_BUILDER_URL = import.meta.env.VITE_FORM_BUILDER_URL ?? "https://banco-talentos-form.netlify.app";
 
