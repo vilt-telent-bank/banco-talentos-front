@@ -1,6 +1,6 @@
 import { Badge, Tag } from "@/components/ui";
 import { type JobPosting, type ExperienceLevel } from "../types";
-
+import { Pencil, PauseCircle, PlayCircle, Clock, Calendar } from "lucide-react";
 
 const SENIORIDADE_BADGE: Record<ExperienceLevel, "junior" | "pleno" | "senior" | "warning"> = {
     JUNIOR: "junior",
@@ -45,9 +45,7 @@ export function VagaCard({ vaga, onEdit, onToggleActive }: Props) {
                         className="text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors p-1.5 rounded-md"
                         title="Editar vaga"
                     >
-                        <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                        </svg>
+                        <Pencil className="w-4 h-4" />
                     </button>
 
                     <button
@@ -59,14 +57,9 @@ export function VagaCard({ vaga, onEdit, onToggleActive }: Props) {
                         title={vaga.active ? "Desativar vaga" : "Ativar vaga"}
                     >
                         {vaga.active ? (
-                            <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M14.25 9v6m-4.5-6v6M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                            </svg>
+                            <PauseCircle className="w-4 h-4" />
                         ) : (
-                            <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
-                            </svg>
+                            <PlayCircle className="w-4 h-4" />
                         )}
                     </button>
                 </div>
@@ -93,15 +86,11 @@ export function VagaCard({ vaga, onEdit, onToggleActive }: Props) {
 
             <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs text-slate-400 mt-auto">
                 <span className="flex items-center gap-1">
-                    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                    </svg>
+                    <Clock className="w-3.5 h-3.5" />
                     Alocação: {vaga.estimatedAllocationWeeks} semanas
                 </span>
                 <span className="flex items-center gap-1">
-                    <svg fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-                    </svg>
+                    <Calendar className="w-3.5 h-3.5" />
                     {new Date(vaga.openingDate).toLocaleDateString("pt-BR")}
                 </span>
             </div>

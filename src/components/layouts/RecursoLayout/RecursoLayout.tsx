@@ -1,6 +1,7 @@
 import { useAuth } from "@/features/auth";
 import { Suspense, useState } from "react";
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
+import { Menu, X, LogOut } from "lucide-react";
 
 const navItems = [
   { to: "/meu-perfil", label: "Meu Perfil" },
@@ -28,7 +29,7 @@ export default function RecursoLayout() {
           className="md:hidden text-white/50 hover:text-white p-1"
           onClick={() => setIsMobileMenuOpen(false)}
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          <X className="w-5 h-5" />
         </button>
       </div>
 
@@ -59,7 +60,7 @@ export default function RecursoLayout() {
           onClick={handleLogout}
           className="text-xs text-white/40 hover:text-white/70 transition-colors flex items-center gap-1.5"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+          <LogOut className="w-3.5 h-3.5" />
           Sair
         </button>
       </div>
@@ -90,7 +91,7 @@ export default function RecursoLayout() {
             <span className="text-pink text-lg font-bold">.</span>
           </div>
           <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 -mr-2 text-slate-600 hover:text-slate-900 focus:outline-none">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <Menu className="w-6 h-6" />
           </button>
         </header>
 
