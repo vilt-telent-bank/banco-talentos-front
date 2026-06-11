@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { UserRole } from "./types/roles";
+import { UserRole } from "../types/roles";
 
 export const loginSchema = z.object({
     email: z.string({ required_error: "O e-mail é obrigatório" })

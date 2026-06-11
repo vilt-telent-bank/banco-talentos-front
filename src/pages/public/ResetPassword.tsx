@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authApi } from "@/features/auth";
 import { Button, Input } from "@/components/ui";
 import AuthLayout from "@/components/layouts/AuthLayout/AuthLayout";
-import { resetPasswordSchema, type ResetPasswordFormData } from "@/features/auth/validations";
+import { resetPasswordSchema, type ResetPasswordFormData } from "@/features/auth/validations/validations";
 import { getApiError } from "@/lib/axios";
 
 export default function ResetPassword() {

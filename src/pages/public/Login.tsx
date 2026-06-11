@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input } from "@/components/ui";
 import { useAuth, UserRole } from "@/features/auth";
-import { loginSchema, type LoginFormData } from "@/features/auth/validations";
+import { loginSchema, type LoginFormData } from "@/features/auth/validations/validations";
 import AuthLayout from "@/components/layouts/AuthLayout/AuthLayout";
 import { getApiError } from "@/lib/axios";
 

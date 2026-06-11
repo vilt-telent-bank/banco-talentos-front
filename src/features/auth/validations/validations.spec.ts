@@ -6,7 +6,7 @@ import {
     forgotPasswordSchema,
     verifyEmailSchema
 } from './validations';
-import { UserRole } from './types/roles';
+import { UserRole } from '../types/roles';
 
 describe('Auth Validations', () => {
     describe('loginSchema', () => {
