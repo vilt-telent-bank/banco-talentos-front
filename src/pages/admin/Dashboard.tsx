@@ -1,7 +1,7 @@
 import { PageHeader, StatCard, Card, Badge } from "@/components/ui";
 import { useDashboardStats, ALOCACAO_COLORS } from "@/features/profiles";
-import { vagasApi } from "@/features/vagas";
-import { useQuery } from "@tanstack/react-query";
+// import { vagasApi } from "@/features/vagas";
+// import { useQuery } from "@tanstack/react-query";
 
 const NIVEL_ROWS = [
   { label: "Sênior", key: "Sr", variant: "senior" },
@@ -13,12 +13,14 @@ export default function Dashboard() {
   const { loading: loadingProfiles, skillView, setSkillView, stats, allProfilesLength } = useDashboardStats();
 
   // Query para buscar o número de Vagas Ativas
+  /*
   const { data: vagasAtivas, isLoading: loadingVagas } = useQuery({
     queryKey: ['dashboard-vagas-ativas'],
     queryFn: vagasApi.getActive
   });
+  */
 
-  const loading = loadingProfiles || loadingVagas;
+  const loading = loadingProfiles; // || loadingVagas;
 
   if (loading || !stats) return <p className="text-slate-400 text-sm">Carregando...</p>;
 
@@ -31,7 +33,7 @@ export default function Dashboard() {
         <StatCard label="Total de cadastros" value={stats.dashData.total} to="/admin/usuarios" />
         <StatCard label="Perfis ativos" value={stats.dashData.ativos} accentColor="#E11D48" to="/admin/alocados" />
         <StatCard label="Aguardando revisão" value={stats.dashData.pendentes} accentColor={stats.dashData.pendentes > 0 ? "#D97706" : undefined} to="/admin/fila" />
-        <StatCard label="Vagas Ativas" value={vagasAtivas?.length ?? 0} accentColor="#8B5CF6" to="/admin/vagas" />
+        {/* <StatCard label="Vagas Ativas" value={vagasAtivas?.length ?? 0} accentColor="#8B5CF6" to="/admin/vagas" /> */}
       </div>
 
       <div className="flex items-center gap-2 pt-2">

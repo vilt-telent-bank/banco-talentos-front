@@ -12,6 +12,6 @@ export * from "./types/profile";
 export * from "./utils/profileUtils";
 export * from "./hooks/useMeuPerfil";
 export * from "./hooks/useTalentoDetalhe";
-export * from "./hooks/useDashboardStats";
+export * from "./hooks/useDashboardStats/useDashboardStats";
 export * from "./api/profiles.api";
 export * from "./hooks/useBancoTalentos/useBancoTalentos";
