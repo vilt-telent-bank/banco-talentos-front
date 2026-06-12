@@ -13,24 +13,33 @@ import {
   REGISTRATION_STATUS_OPTIONS,
   SOFTSKILLS_LIST
 } from "@/features/profiles";
+import { ArrowLeft } from "lucide-react";
 
 
 export default function TalentoDetalhe() {
   const { id } = useParams<{ id: string }>();
   const {
-    profile, form, stacks, saving, saved, loading,
+    profile, form, stacks, saving, loading,
     setStacks, updateField, handleAddSoftSkill, handleRemoveSoftSkill, handleSave
   } = useTalentoDetalhe(id);
 
   const [selectedSoftSkill, setSelectedSoftSkill] = useState("");
   const [selectedSoftLevel, setSelectedSoftLevel] = useState<number | "">("");
 
+
   if (loading || !profile) {
     return <p className="text-gray-400 text-sm">Carregando...</p>;
   }
 
-  const isPendente = profile.status === "PENDENTE";
-  const nivel = form.nivelOverride || profile.nivel;
+  const isPendente = profile.status === "PENDING";
+
+  // Verifica se a situação de alocação atual o enquadra como alocado
+  const isAlocado = profile.allocationStatus && ["Alocado Integral (100%)", "Alocado Parcial", "Em Transição (saindo de projeto)"].includes(profile.allocationStatus);
+
+  // Define o destino do botão voltar
+  const backLink = isPendente ? "/admin/fila" : (isAlocado ? "/admin/alocados" : "/admin/talentos");
+
+  const nivel = form.levelOverride || profile.nivel;
   const ns = nivel ? NIVEL_STYLE[nivel] : null;
 
   const expLabel = EXPERIENCE_OPTIONS.find((o) => String(o.value) === String(form.experienceYears))?.label ?? "";
@@ -47,12 +56,15 @@ export default function TalentoDetalhe() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center gap-2">
-        <Link
-          to={isPendente ? "/admin/fila" : "/admin/talentos"}
-          className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          ← {isPendente ? "Fila de revisão" : "Voltar"}
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to={backLink}
+            className="flex items-center gap-2 text-sm text-gray-400 hover:text-gray-600 transition-colors font-medium"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {isPendente ? "Fila de revisão" : "Voltar"}
+          </Link>
+        </div>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-4">
@@ -91,12 +103,12 @@ export default function TalentoDetalhe() {
           </Section>
 
           <Section title="Override de nível">
-            <Select value={form.nivelOverride} onChange={(e) => updateField("nivelOverride", e.target.value)} options={NIVEL_OPTIONS} />
+            <Select value={form.levelOverride} onChange={(e) => updateField("levelOverride", e.target.value)} options={NIVEL_OPTIONS} />
           </Section>
 
           <Section title="Alocação e carreira">
-            <Select label="Situação de alocação" value={form.alocacaoStatus} onChange={(e) => updateField("alocacaoStatus", e.target.value)} options={ALOCACAO_OPTIONS} />
-            <Select label="Trilha de carreira" value={form.trilhaCarreira} onChange={(e) => updateField("trilhaCarreira", e.target.value)} options={TRILHA_OPTIONS} />
+            <Select label="Situação de alocação" value={form.allocationStatus} onChange={(e) => updateField("allocationStatus", e.target.value)} options={ALOCACAO_OPTIONS} />
+            <Select label="Trilha de carreira" value={form.careerPath} onChange={(e) => updateField("careerPath", e.target.value)} options={TRILHA_OPTIONS} />
           </Section>
 
           <Section title="Identificação">
@@ -107,8 +119,8 @@ export default function TalentoDetalhe() {
             <div className="mt-2">
               <label className="text-xs text-gray-400 block mb-1">Sobre</label>
               <textarea
-                value={form.sobre}
-                onChange={(e) => updateField("sobre", e.target.value)}
+                value={form.about}
+                onChange={(e) => updateField("about", e.target.value)}
                 rows={3}
                 className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 outline-none focus:border-pink-400 resize-none bg-white"
               />
@@ -208,8 +220,6 @@ export default function TalentoDetalhe() {
             >
               {saving ? "Salvando..." : "Salvar alterações"}
             </Button>
-
-            {saved && <span className="text-sm text-green-600 font-medium">Salvo ✓</span>}
           </div>
         </div>
       </div>

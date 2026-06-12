@@ -50,7 +50,7 @@ export const router = createBrowserRouter([
     // Rota de Recurso (Usuário Padrão)
     {
         path: "/",
-        element: <ProtectedRoute role={UserRole.RECURSO} />,
+        element: <ProtectedRoute role={UserRole.RESOURCE} />,
         children: [
             {
                 element: <RecursoLayout />,

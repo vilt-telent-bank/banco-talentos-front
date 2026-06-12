@@ -19,7 +19,7 @@ describe('Auth Validations', () => {
             const result = loginSchema.safeParse({ email: "email-invalido", password: "123" });
             expect(result.success).toBe(false);
             if (!result.success) {
-                expect(result.error.issues[0].message).toBe("Formato de e-mail inválido");
+                expect(result.error.issues[0].message).toBe("E-mail inválido");
             }
         });
     });
@@ -30,7 +30,7 @@ describe('Auth Validations', () => {
                 name: "João",
                 email: "joao@gmail.com",
                 password: "password123",
-                role: UserRole.RECURSO,
+                role: UserRole.RESOURCE,
                 groupId: "1"
             });
             expect(result.success).toBe(false);

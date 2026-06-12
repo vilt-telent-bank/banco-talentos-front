@@ -25,9 +25,9 @@ const wrapperFactory = () => {
 
 describe('Hook useBancoTalentos', () => {
     const mockAtivos = [
-        { id: '1', user: { name: 'Carlos Ramos' }, area: 'Backend', alocacaoStatus: 'Disponível (Bench)', skills: [{ skill: { name: 'Java' } }] },
-        { id: '2', user: { name: 'Ana Costa' }, area: 'Frontend', alocacaoStatus: 'Disponível (Bench)', skills: [{ name: 'React' }] },
-        { id: '3', user: { name: 'Rui Santos' }, area: 'DevOps', alocacaoStatus: 'Alocado Integral (100%)', skills: [{ name: 'Docker' }] }
+        { id: '1', user: { name: 'Carlos Ramos' }, area: 'Backend', allocationStatus: 'Disponível (Bench)', skills: [{ skill: { name: 'Java' } }] },
+        { id: '2', user: { name: 'Ana Costa' }, area: 'Frontend', allocationStatus: 'Disponível (Bench)', skills: [{ name: 'React' }] },
+        { id: '3', user: { name: 'Rui Santos' }, area: 'DevOps', allocationStatus: 'Alocado Integral (100%)', skills: [{ name: 'Docker' }] }
     ];
 
     beforeEach(() => {

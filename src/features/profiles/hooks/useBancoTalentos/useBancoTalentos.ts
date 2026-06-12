@@ -9,14 +9,16 @@ export function useBancoTalentos() {
 
     const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
         queryKey: ['profiles-ativos'],
-        queryFn: async () => {
+        queryFn: async (): Promise<UserProfile[]> => {
             const data = await profilesApi.getAtivos();
-            return Array.isArray(data) ? data : [];
+
+            if (Array.isArray(data)) return data;
+            return (data as any)?.content || (data as any)?.data || [];
         }
     });
 
     const areas = useMemo(() => Array.from(new Set(profiles.map((p) => p.area).filter(Boolean))), [profiles]);
-    const disponíveis = useMemo(() => profiles.filter((p) => p.alocacaoStatus === "Disponível (Bench)"), [profiles]);
+    const disponíveis = useMemo(() => profiles.filter((p) => p.allocationStatus === "Disponível (Bench)"), [profiles]);
 
     const filtered = useMemo(() => disponíveis.filter((p) => {
         const q = search.toLowerCase();

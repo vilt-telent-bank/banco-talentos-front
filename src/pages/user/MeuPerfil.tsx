@@ -5,8 +5,8 @@ export default function MeuPerfil() {
   const { profile, loading, saved, stacks, setStacks, form, onSubmit } = useMeuPerfil();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = form;
 
-  const isAtivo = profile?.status === "ATIVO";
-  const isPendente = profile?.status === "PENDENTE";
+  const isAtivo = profile?.status === "ACTIVE";
+  const isPendente = profile?.status === "PENDING";
 
   return (
     <div className="flex flex-col gap-6">
@@ -43,7 +43,7 @@ export default function MeuPerfil() {
                   placeholder="Um parágrafo curto descrevendo sua experiência e foco de atuação."
                   rows={3}
                   className="w-full rounded-lg px-3 py-2 text-sm outline-none bg-white border border-gray-200 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 resize-none"
-                  {...register("sobre")}
+                  {...register("about")}
                 />
               </div>
 

@@ -1,5 +1,4 @@
 export const NIVEL_OPTIONS = [
-    { value: "", label: "Manter avaliação IA" },
     { value: "Jr", label: "Jr" },
     { value: "Pleno", label: "Pleno" },
     { value: "Sr", label: "Sr" },

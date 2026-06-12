@@ -9,7 +9,7 @@ interface Props {
   photoUrl?: string;
   area?: string;
   nivel?: string;
-  alocacaoStatus?: string;
+  allocationStatus?: string;
   skills?: ProfileSkill[];
   createdAt?: string;
   href?: string;
@@ -49,10 +49,10 @@ const REG_STATUS_LABEL: Record<string, string> = {
   "REJECTED": "Matrícula Recusada",
 };
 
-export function PersonCard({ id, name, email, photoUrl, area, nivel, alocacaoStatus, skills, createdAt, href, registrationStatus }: Props) {
+export function PersonCard({ id, name, email, photoUrl, area, nivel, allocationStatus, skills, createdAt, href, registrationStatus }: Props) {
   const badgeVariant = nivel ? NIVEL_BADGE[nivel] : undefined;
-  const tagKind = alocacaoStatus ? ALOC_TAG[alocacaoStatus] : undefined;
-  const tagLabel = alocacaoStatus ? (ALOC_LABEL[alocacaoStatus] ?? alocacaoStatus.split(" ")[0]) : undefined;
+  const tagKind = allocationStatus ? ALOC_TAG[allocationStatus] : undefined;
+  const tagLabel = allocationStatus ? (ALOC_LABEL[allocationStatus] ?? allocationStatus.split(" ")[0]) : undefined;
 
   const regLabel = registrationStatus ? REG_STATUS_LABEL[registrationStatus] : undefined;
   const regTagKind = registrationStatus ? REG_STATUS_TAG[registrationStatus] : undefined;

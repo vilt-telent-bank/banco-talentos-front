@@ -16,10 +16,15 @@ export default function RecursosAlocados() {
 
   const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
     queryKey: ['profiles-ativos-alocados'],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserProfile[]> => {
       const data = await profilesApi.getAtivos();
-      const all = Array.isArray(data) ? data : [];
-      return all.filter((p) => STATUS_ALOCADO.has(p.alocacaoStatus));
+      let all = [];
+      if (Array.isArray(data)) {
+        all = data;
+      } else {
+        all = (data as any)?.content || (data as any)?.data || [];
+      }
+      return all.filter((p: UserProfile) => p.allocationStatus != null && STATUS_ALOCADO.has(p.allocationStatus));
     }
   });
 
@@ -31,14 +36,14 @@ export default function RecursosAlocados() {
       (!q || p.user?.name?.toLowerCase().includes(q) || p.area?.toLowerCase().includes(q) ||
         p.skills?.some((s: any) => (s.skill?.name || s.name)?.toLowerCase().includes(q))) &&
       (!area || p.area === area) &&
-      (!statusFilter || p.alocacaoStatus === statusFilter)
+      (!statusFilter || p.allocationStatus === statusFilter)
     );
   }), [profiles, search, area, statusFilter]);
 
   const counts = useMemo(() => ({
-    integral: profiles.filter((p) => p.alocacaoStatus === "Alocado Integral (100%)").length,
-    parcial: profiles.filter((p) => p.alocacaoStatus === "Alocado Parcial").length,
-    transicao: profiles.filter((p) => p.alocacaoStatus === "Em Transição (saindo de projeto)").length,
+    integral: profiles.filter((p) => p.allocationStatus === "Alocado Integral (100%)").length,
+    parcial: profiles.filter((p) => p.allocationStatus === "Alocado Parcial").length,
+    transicao: profiles.filter((p) => p.allocationStatus === "Em Transição (saindo de projeto)").length,
   }), [profiles]);
 
   if (loading) return <p className="text-slate-400 text-sm">Carregando...</p>;
@@ -109,8 +114,8 @@ export default function RecursosAlocados() {
               email={p.user?.email}
               photoUrl={p.photoUrl}
               area={p.area}
-              nivel={p.nivelOverride ?? p.nivel}
-              alocacaoStatus={p.alocacaoStatus}
+              nivel={p.levelOverride ?? p.nivel}
+              allocationStatus={p.allocationStatus}
               skills={p.skills}
               createdAt={p.createdAt}
               registrationStatus={p.registrationStatus}
