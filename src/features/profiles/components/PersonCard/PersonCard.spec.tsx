@@ -10,7 +10,7 @@ describe('Componente PersonCard', () => {
         status: "ATIVO",
         nivel: "Sr",
         area: "Frontend",
-        alocacaoStatus: "Disponível (Bench)",
+        allocationStatus: "Disponível (Bench)",
         registrationStatus: "APPROVED",
         skills: [
             { skill: { name: "React" } },
@@ -34,7 +34,7 @@ describe('Componente PersonCard', () => {
                     email={mockProfile.user!.email}
                     area={mockProfile.area}
                     nivel={mockProfile.nivel}
-                    alocacaoStatus={mockProfile.alocacaoStatus}
+                    allocationStatus={mockProfile.allocationStatus}
                     skills={mockProfile.skills}
                     registrationStatus={mockProfile.registrationStatus}
                 />
@@ -53,7 +53,7 @@ describe('Componente PersonCard', () => {
                 <PersonCard
                     id={mockProfile.id}
                     name={mockProfile.user!.name}
-                    alocacaoStatus="Em Transição (saindo de projeto)"
+                    allocationStatus="Em Transição (saindo de projeto)"
                     registrationStatus="AWAITING_APPROVAL"
                 />
             </MemoryRouter>

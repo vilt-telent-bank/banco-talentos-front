@@ -105,9 +105,9 @@ describe('Componente VagaModal', () => {
         fireEvent.click(submitButton);
 
         await waitFor(() => {
-            expect(screen.getByText('O ID do projeto é obrigatório')).toBeInTheDocument();
-            expect(screen.getByText('O ID da squad é obrigatório')).toBeInTheDocument();
-            expect(screen.getByText('O recrutador é obrigatório')).toBeInTheDocument();
+            expect(screen.getByText('Selecione o projeto')).toBeInTheDocument();
+            expect(screen.getByText('Selecione a squad')).toBeInTheDocument();
+            expect(screen.getByText('Informe o recrutador responsável')).toBeInTheDocument();
         });
     });
 

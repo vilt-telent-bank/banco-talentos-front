@@ -6,7 +6,7 @@ import type { UserProfile } from '../../types/profile';
 describe('ProfileReadOnly Component', () => {
     const mockProfileBase: UserProfile = {
         id: '123',
-        status: 'ATIVO',
+        status: 'ACTIVE', // Ajustado de 'ATIVO' para 'ACTIVE' para corresponder à lógica do componente
         nivel: 'Pleno',
         registrationStatus: 'APPROVED',
         registrationNumber: 'MAT-999',
@@ -14,7 +14,7 @@ describe('ProfileReadOnly Component', () => {
         experienceYears: 4,
         linkedinUrl: 'https://linkedin.com/in/leticia',
         githubUrl: 'https://github.com/leticia',
-        sobre: 'Desenvolvedora focado na criação de interfaces.',
+        about: 'Desenvolvedora focado na criação de interfaces.',
         skills: [
             { skill: { name: 'React', type: 'HARD' }, proficiencyLevel: 8 },
             { skill: { name: 'TypeScript' }, level: 7 },
@@ -33,7 +33,7 @@ describe('ProfileReadOnly Component', () => {
     });
 
     it('deve renderizar o cabeçalho, aviso e badge corretamente quando o perfil está PENDENTE', () => {
-        const profilePendente = { ...mockProfileBase, status: 'PENDENTE', nivel: 'Jr' };
+        const profilePendente = { ...mockProfileBase, status: 'PENDING', nivel: 'Jr' }; // Ajustado para 'PENDING'
         render(<ProfileReadOnly profile={profilePendente} />);
 
         expect(screen.getByText('Perfil enviado - aguardando revisão do RH')).toBeInTheDocument();
@@ -51,7 +51,8 @@ describe('ProfileReadOnly Component', () => {
         expect(screen.getByText('Frontend')).toBeInTheDocument();
 
         expect(screen.getByText('Sobre você')).toBeInTheDocument();
-        expect(screen.getByText('Desenvolvedor focado na criação de interfaces.')).toBeInTheDocument();
+        // Ajustado de "Desenvolvedor" para "Desenvolvedora" para bater com o mockProfileBase
+        expect(screen.getByText('Desenvolvedora focado na criação de interfaces.')).toBeInTheDocument();
     });
 
     it('deve calcular corretamente a label de "Anos de experiência"', () => {
@@ -71,13 +72,14 @@ describe('ProfileReadOnly Component', () => {
     it('deve renderizar os links do LinkedIn e GitHub', () => {
         render(<ProfileReadOnly profile={mockProfileBase} />);
 
-        const linkedinLink = screen.getByText('https://linkedin.com/in/joao');
+        // Ajustado de "/joao" para "/leticia" para bater com os links do mockProfileBase
+        const linkedinLink = screen.getByText('https://linkedin.com/in/leticia');
         expect(linkedinLink).toBeInTheDocument();
-        expect(linkedinLink).toHaveAttribute('href', 'https://linkedin.com/in/joao');
+        expect(linkedinLink).toHaveAttribute('href', 'https://linkedin.com/in/leticia');
 
-        const githubLink = screen.getByText('https://github.com/joao');
+        const githubLink = screen.getByText('https://github.com/leticia');
         expect(githubLink).toBeInTheDocument();
-        expect(githubLink).toHaveAttribute('href', 'https://github.com/joao');
+        expect(githubLink).toHaveAttribute('href', 'https://github.com/leticia');
     });
 
     it('deve renderizar apenas as Hard Skills e ocultar as Soft Skills', () => {

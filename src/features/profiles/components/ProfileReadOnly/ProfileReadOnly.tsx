@@ -3,8 +3,8 @@ import { getLevelStyle, getLevelLabel, getRegistrationStatusLabel } from "../../
 import { NIVEL_STYLE } from "../../profile";
 
 export function ProfileReadOnly({ profile }: { profile: UserProfile }) {
-    const isAtivo = profile.status === "ATIVO";
-    const nivel = profile.nivelOverride ?? profile.nivel;
+    const isAtivo = profile.status === "ACTIVE";
+    const nivel = profile.levelOverride ?? profile.nivel;
     const ns = nivel ? NIVEL_STYLE[nivel] : null;
 
     const hardSkills = profile.skills?.filter((ps) => ps.skill?.type !== "SOFT" && ps.type !== "SOFT") || [];
@@ -68,10 +68,10 @@ export function ProfileReadOnly({ profile }: { profile: UserProfile }) {
                     )}
                 </div>
 
-                {profile.sobre && (
+                {profile.about && (
                     <div className="px-4 sm:px-6 pb-5">
                         <p className="text-xs text-gray-400 mb-1">Sobre você</p>
-                        <p className="text-sm text-gray-700 leading-relaxed">{profile.sobre}</p>
+                        <p className="text-sm text-gray-700 leading-relaxed">{profile.about}</p>
                     </div>
                 )}
 

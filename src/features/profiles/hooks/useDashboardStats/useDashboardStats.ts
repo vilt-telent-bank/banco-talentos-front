@@ -28,9 +28,11 @@ export function useDashboardStats() {
 
     const { data: allProfiles = [] as UserProfile[], isLoading: loadingProfiles } = useQuery({
         queryKey: ['profiles-todos'],
-        queryFn: async () => {
+        queryFn: async (): Promise<UserProfile[]> => {
             const d = await profilesApi.getAllProfiles();
-            return Array.isArray(d) ? d : [];
+
+            if (Array.isArray(d)) return d;
+            return (d as any)?.content || (d as any)?.data || [];
         }
     });
 
@@ -41,10 +43,10 @@ export function useDashboardStats() {
         const nivelCalculado: Record<"Jr" | "Pleno" | "Sr", number> = { Jr: 0, Pleno: 0, Sr: 0 };
 
         allProfiles.forEach((p) => {
-            const s = p.alocacaoStatus ?? "Sem status";
+            const s = p.allocationStatus ?? "Sem status";
             alocacaoMap[s] = (alocacaoMap[s] ?? 0) + 1;
 
-            const n = p.nivelOverride || p.nivel;
+            const n = p.levelOverride || p.nivel;
             if (n === "Jr" || n === "Pleno" || n === "Sr") {
                 nivelCalculado[n as "Jr" | "Pleno" | "Sr"]++;
             }

@@ -10,12 +10,11 @@ export function useTalentoDetalhe(id: string | undefined) {
     const navigate = useNavigate();
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [stacks, setStacks] = useState<StackItem[]>([]);
-    const [saved, setSaved] = useState(false);
     const queryClient = useQueryClient();
 
     const [form, setForm] = useState<ProfileFormState>({
-        area: "", sobre: "", alocacaoStatus: "", trilhaCarreira: "",
-        experienceYears: "", linkedinUrl: "", githubUrl: "", nivelOverride: "",
+        area: "", about: "", allocationStatus: "", careerPath: "",
+        experienceYears: "", linkedinUrl: "", githubUrl: "", levelOverride: "",
         registrationNumber: "", registrationStatus: "NOT_REQUESTED", softSkills: [],
     });
 
@@ -51,13 +50,13 @@ export function useTalentoDetalhe(id: string | undefined) {
         setStacks(loadedStacks);
         setForm({
             area: p.area ?? "",
-            sobre: p.sobre ?? "",
-            alocacaoStatus: p.alocacaoStatus ?? "",
-            trilhaCarreira: p.trilhaCarreira ?? "",
+            about: p.about ?? "",
+            allocationStatus: p.allocationStatus || "Disponível (Bench)",
+            careerPath: p.careerPath ?? "",
             experienceYears: p.experienceYears ?? "",
             linkedinUrl: p.linkedinUrl ?? "",
             githubUrl: p.githubUrl ?? "",
-            nivelOverride: p.nivelOverride ?? "",
+            levelOverride: p.levelOverride ?? "",
             registrationNumber: p.registrationNumber ?? "",
             registrationStatus: p.registrationStatus ?? "NOT_REQUESTED",
             softSkills: loadedSofts,
@@ -89,34 +88,35 @@ export function useTalentoDetalhe(id: string | undefined) {
             setProfile(updated);
             queryClient.invalidateQueries({ queryKey: ['talento', variables.id] });
 
-            if (variables.payload.status === "ATIVO") {
-                navigate("/admin/talentos");
+            // Verifica o status de alocação que acabou de ser salvo
+            const isAlocado = variables.payload.allocationStatus && ["Alocado Integral (100%)", "Alocado Parcial", "Em Transição (saindo de projeto)"].includes(variables.payload.allocationStatus);
+            const isPendente = variables.payload.status === "PENDING" || variables.payload.status === "PENDENTE";
+
+            // Redireciona para a lista correta
+            if (isPendente) {
+                navigate("/admin/fila");
             } else {
-                setSaved(true);
-                setTimeout(() => setSaved(false), 2000);
+                navigate(isAlocado ? "/admin/alocados" : "/admin/talentos");
             }
         },
         onError: (error) => {
             console.error("Erro ao salvar", error);
         }
     });
-
     const handleSave = async (activate = false) => {
         if (!id) return;
-
         const payload = {
             ...form,
-            nivelOverride: form.nivelOverride || null,
-            skills: stacks.map((s) => ({ name: s.name, level: s.level })),
-            softSkills: form.softSkills.map((s) => ({ name: s.name, level: s.level })),
-            status: activate ? "ATIVO" : profile?.status,
+            levelOverride: form.levelOverride || null,
+            skills: stacks.map((s) => ({ name: s.name, proficiencyLevel: s.level })),
+            softSkills: form.softSkills.map((s) => ({ name: s.name, proficiencyLevel: s.level })),
+            status: activate ? "ACTIVE" : profile?.status,
         };
-
         saveMutation.mutate({ id, payload });
     };
 
     return {
-        profile, form, stacks, saving: saveMutation.isPending, saved, loading,
+        profile, form, stacks, saving: saveMutation.isPending, loading,
         setStacks, updateField, handleAddSoftSkill, handleRemoveSoftSkill, handleSave
     };
 }

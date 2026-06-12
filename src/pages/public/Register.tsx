@@ -17,17 +17,20 @@ export default function Register() {
 
   const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { role: UserRole.RECURSO }
+    defaultValues: { role: UserRole.RESOURCE }
   });
 
   const selectedRole = watch("role");
 
   useEffect(() => {
     authApi.getGroups().then((data) => {
-      const list: Group[] = Array.isArray(data) ? data : data.content ?? [];
+      const list: Group[] = Array.isArray(data)
+        ? data
+        : (data as any)?.content || (data as any)?.data || [];
+
       setGroups(list);
       if (list.length > 0) {
-        setValue("groupId", list[0].id); // Preenche automaticamente o primeiro
+        setValue("groupId", list[0].id);
       }
     });
   }, [setValue]);
@@ -65,7 +68,7 @@ export default function Register() {
         <Select
           label="Perfil"
           options={[
-            { value: UserRole.RECURSO, label: "Recurso" },
+            { value: UserRole.RESOURCE, label: "Recurso" },
             { value: UserRole.ADMIN, label: "Administrador" }
           ]}
           {...register("role")}

@@ -39,10 +39,10 @@ describe('Hook useDashboardStats', () => {
     };
 
     const mockAllProfiles = [
-        { id: "1", alocacaoStatus: "Disponível (Bench)", nivel: "Jr", nivelOverride: null },
-        { id: "2", alocacaoStatus: "Alocado Integral (100%)", nivel: "Pleno", nivelOverride: null },
-        { id: "3", alocacaoStatus: "Disponível (Bench)", nivel: "Jr", nivelOverride: "Sr" },
-        { id: "4", alocacaoStatus: "Em Transição (saindo de projeto)", nivel: "Pleno", nivelOverride: null }
+        { id: "1", allocationStatus: "Disponível (Bench)", nivel: "Jr", levelOverride: null },
+        { id: "2", allocationStatus: "Alocado Integral (100%)", nivel: "Pleno", levelOverride: null },
+        { id: "3", allocationStatus: "Disponível (Bench)", nivel: "Jr", levelOverride: "Sr" },
+        { id: "4", allocationStatus: "Em Transição (saindo de projeto)", nivel: "Pleno", levelOverride: null }
     ];
 
     beforeEach(() => {

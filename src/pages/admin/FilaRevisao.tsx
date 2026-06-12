@@ -6,12 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 export default function FilaRevisao() {
   const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
     queryKey: ['profiles-pendentes'],
-    queryFn: async () => {
+    queryFn: async (): Promise<UserProfile[]> => {
       const data = await profilesApi.getPendentes();
-      return Array.isArray(data) ? data : [];
+
+      if (Array.isArray(data)) return data;
+
+      return (data as any)?.content || (data as any)?.data || [];
     }
   });
-
   if (loading) return <p className="text-slate-400 text-sm">Carregando...</p>;
 
   return (
@@ -61,10 +63,10 @@ export default function FilaRevisao() {
                     <p className="text-sm text-slate-700">{p.area}</p>
                   </div>
                 )}
-                {p.alocacaoStatus && (
+                {p.allocationStatus && (
                   <div>
                     <p className="text-xs text-slate-400 uppercase tracking-wider mb-0.5">Alocação</p>
-                    <p className="text-sm text-slate-700">{p.alocacaoStatus}</p>
+                    <p className="text-sm text-slate-700">{p.allocationStatus}</p>
                   </div>
                 )}
               </div>
@@ -82,8 +84,8 @@ export default function FilaRevisao() {
                 </div>
               )}
 
-              {p.sobre && (
-                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">{p.sobre}</p>
+              {p.about && (
+                <p className="text-sm text-slate-500 leading-relaxed line-clamp-2">{p.about}</p>
               )}
             </Link>
           ))}

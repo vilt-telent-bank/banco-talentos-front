@@ -11,14 +11,14 @@ export interface ProfileSkill {
 
 export interface UserProfile {
     id: string;
-    status: "PENDENTE" | "ATIVO" | string;
+    status: "PENDING" | "ACTIVE" | string;
     nivel?: string;
-    nivelOverride?: string;
+    levelOverride?: string;
     photoUrl?: string;
     area?: string;
-    sobre?: string;
-    alocacaoStatus?: string;
-    trilhaCarreira?: string;
+    about?: string;
+    allocationStatus?: string;
+    careerPath?: string;
     experienceYears?: string | number;
     linkedinUrl?: string;
     githubUrl?: string;
@@ -34,13 +34,13 @@ export interface UserProfile {
 
 export interface ProfileFormState {
     area: string;
-    sobre: string;
-    alocacaoStatus: string;
-    trilhaCarreira: string;
+    about: string;
+    allocationStatus: string;
+    careerPath: string;
     experienceYears: string | number;
     linkedinUrl: string;
     githubUrl: string;
-    nivelOverride: string;
+    levelOverride: string;
     registrationNumber: string;
     registrationStatus: string;
     softSkills: { name: string; level: number }[];

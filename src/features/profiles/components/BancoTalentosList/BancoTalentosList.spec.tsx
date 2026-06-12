@@ -62,13 +62,13 @@ describe('BancoTalentosList Component', () => {
                 id: '1',
                 user: { name: 'João Silva', email: 'joao@vilt-group.com' },
                 area: 'Frontend',
-                alocacaoStatus: 'Disponível (Bench)'
+                allocationStatus: 'Disponível (Bench)'
             },
             {
                 id: '2',
                 user: { name: 'Maria Souza', email: 'maria@vilt-group.com' },
                 area: 'Backend',
-                alocacaoStatus: 'Disponível (Bench)'
+                allocationStatus: 'Disponível (Bench)'
             }
         ];
 

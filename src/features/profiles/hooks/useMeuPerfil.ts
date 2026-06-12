@@ -10,7 +10,7 @@ import { profilesApi } from "../api/profiles.api";
 const profileSchema = z.object({
     photoUrl: z.string().optional(),
     area: z.string().min(1, "Obrigatório"),
-    sobre: z.string().optional(),
+    about: z.string().optional(),
     experienceYears: z.string().optional(),
     linkedinUrl: z.string().optional(),
     githubUrl: z.string().optional(),
@@ -40,7 +40,7 @@ export function useMeuPerfil() {
         form.reset({
             photoUrl: fetchedProfile.photoUrl ?? "",
             area: fetchedProfile.area ?? "",
-            sobre: fetchedProfile.sobre ?? "",
+            about: fetchedProfile.about ?? "",
             experienceYears: fetchedProfile.experienceYears != null ? String(fetchedProfile.experienceYears) : "",
             linkedinUrl: fetchedProfile.linkedinUrl ?? "",
             githubUrl: fetchedProfile.githubUrl ?? "",
@@ -71,7 +71,7 @@ export function useMeuPerfil() {
     });
 
     const onSubmit = async (data: ProfileFormData) => {
-        const skillList = stacks.map((s) => ({ name: s.name, level: s.level }));
+        const skillList = stacks.map((s) => ({ name: s.name, proficiencyLevel: s.level }));
         const payload = {
             ...data,
             experienceYears: data.experienceYears ? Number(data.experienceYears) : undefined,
