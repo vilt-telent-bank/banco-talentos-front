@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import type { StackItem } from "../components/StackInput/StackInput";
 import { SOFTSKILLS_LIST } from "../profile";
@@ -101,6 +102,7 @@ export function useTalentoDetalhe(id: string | undefined) {
         },
         onError: (error) => {
             console.error("Erro ao salvar", error);
+            toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente.");
         }
     });
     const handleSave = async (activate = false) => {

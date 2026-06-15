@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { vagasApi, VagaCard, VagaModal, type JobPosting, type JobPostingPayload } from "@/features/vagas";
 import { PageHeader, Button } from "@/components/ui";
 
@@ -26,13 +27,21 @@ export default function Vagas() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['vagas'] });
       closeModal();
+    },
+    onError: (error) => {
+      console.error("Erro ao salvar", error);
+      toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente.");
     }
   });
 
   const toggleStatusMutation = useMutation({
     mutationFn: async ({ id, active }: { id: string, active: boolean }) =>
       active ? vagasApi.deactivate(id) : vagasApi.activate(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vagas'] })
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['vagas'] }),
+    onError: (error) => {
+      console.error("Erro ao atualizar status", error);
+      toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente.");
+    }
   });
 
   const currentList = viewActive ? activeVagas : inactiveVagas;
