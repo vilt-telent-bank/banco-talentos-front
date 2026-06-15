@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -67,6 +68,7 @@ export function useMeuPerfil() {
         },
         onError: (error) => {
             console.error("Erro ao salvar perfil", error);
+            toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente.");
         }
     });
 

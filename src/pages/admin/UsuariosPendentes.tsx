@@ -3,6 +3,7 @@ import { PageHeader, Badge, Button, Card } from "@/components/ui";
 import { profilesApi } from "@/features/profiles";
 import { UserRole } from "@/features/auth";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 interface PendingUser {
   id: string;
@@ -26,11 +27,13 @@ export default function UsuariosPendentes() {
   const approveMutation = useMutation({
     mutationFn: profilesApi.approveUser,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['usuarios-pendentes'] }),
+    onError: () => toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente."),
   });
 
   const rejectMutation = useMutation({
     mutationFn: profilesApi.rejectUser,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['usuarios-pendentes'] }),
+    onError: () => toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente."),
   });
 
   const error = isError ? "Não foi possível carregar os usuários pendentes." : 
