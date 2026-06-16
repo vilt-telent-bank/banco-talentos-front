@@ -1,9 +1,12 @@
-import { Card } from "@/components/ui";
+import { Card, Pagination } from "@/components/ui";
 import { PersonCard } from "../PersonCard/PersonCard";
 import { useBancoTalentos } from "../../hooks/useBancoTalentos/useBancoTalentos";
 
 export function BancoTalentosList() {
-    const { search, setSearch, area, setArea, areas, filtered, loading } = useBancoTalentos();
+    const {
+        search, setSearch, area, setArea, areas, filtered, loading,
+        page, setPage, totalPages, totalElements
+    } = useBancoTalentos();
 
     if (loading) return <p className="text-slate-400 text-sm">Carregando...</p>;
 
@@ -20,7 +23,7 @@ export function BancoTalentosList() {
                 <div className="flex-1">
                     <input placeholder="Buscar por nome, área ou skill..." value={search} onChange={(e) => setSearch(e.target.value)} className="w-full text-sm border border-slate-300 rounded-md px-3 py-1.5 outline-none focus:border-pink focus:shadow-focus-pink bg-white text-slate-900" />
                 </div>
-                <span className="text-xs text-slate-400">{filtered.length} pessoa{filtered.length !== 1 ? "s" : ""}</span>
+                <span className="text-xs text-slate-400">{totalElements} pessoa{totalElements !== 1 ? "s" : ""} no total</span>
             </Card>
 
             {filtered.length === 0 ? (
@@ -28,13 +31,31 @@ export function BancoTalentosList() {
                     <p className="text-slate-400 text-sm">Nenhum talento encontrado.</p>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filtered.map((p) => (
-                        <PersonCard
-                            key={p.id} id={p.id} name={p.name ?? ""} email={p.email} photoUrl={p.photoUrl} area={p.area} nivel={p.levelOverride ?? p.nivel} allocationStatus={p.allocationStatus} skills={p.skills} createdAt={p.createdAt} registrationStatus={p.registrationStatus}
-                        />
-                    ))}
-                </div>
+                <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {filtered.map((p) => (
+                            <PersonCard
+                                key={p.id}
+                                id={p.id}
+                                name={p.name ?? "?"}
+                                email={p.email}
+                                photoUrl={p.photoUrl}
+                                area={p.area}
+                                nivel={p.levelOverride ?? p.level ?? p.nivel}
+                                allocationStatus={p.allocationStatus}
+                                skills={p.skills}
+                                createdAt={p.createdAt}
+                                registrationStatus={p.registrationStatus}
+                            />
+                        ))}
+                    </div>
+
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                    />
+                </>
             )}
         </>
     );

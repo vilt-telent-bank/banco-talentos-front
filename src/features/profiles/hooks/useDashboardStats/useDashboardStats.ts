@@ -29,14 +29,12 @@ export function useDashboardStats() {
         queryFn: profilesApi.getDashboard,
     });
 
-    const { data: allProfiles = [] as UserProfile[], isLoading: loadingProfiles } = useQuery({
+    const { data: profilesData, isLoading: loadingProfiles } = useQuery({
         queryKey: ['profiles-todos'],
-        queryFn: async (): Promise<UserProfile[]> => {
-            const d = await profilesApi.getAllProfiles();
-            if (Array.isArray(d)) return d;
-            return (d as any)?.content || (d as any)?.data || [];
-        }
+        queryFn: () => profilesApi.getAllProfiles(0, 1000)
     });
+
+    const allProfiles: UserProfile[] = profilesData?.content || [];
 
     const stats = useMemo(() => {
         if (!dashData) return null;
@@ -64,13 +62,22 @@ export function useDashboardStats() {
         };
 
         return {
-            dashData, alocacaoMap, alocacaoEntries, maxAlocacao, disponiveisBench,
-            nivelCalculado, skillsToRender, maxSkill
+            dashData,
+            alocacaoMap,
+            alocacaoEntries,
+            maxAlocacao,
+            disponiveisBench,
+            nivelCalculado,
+            skillsToRender,
+            maxSkill
         };
     }, [allProfiles, dashData, skillView]);
 
     return {
         loading: loadingDash || loadingProfiles,
-        skillView, setSkillView, stats, allProfilesLength: allProfiles.length
+        skillView,
+        setSkillView,
+        stats,
+        allProfilesLength: allProfiles.length
     };
 }

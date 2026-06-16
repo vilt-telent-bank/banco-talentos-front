@@ -13,5 +13,5 @@ export const authApi = {
         http.post("/v1/auth/forgot-password", { email }).then((r) => r.data),
     resetPassword: (email: string, token: string, newPassword: string) =>
         http.post("/v1/auth/reset-password", { email, token, newPassword }).then((r) => r.data),
-    getGroups: () => http.get("/v1/groups").then((r) => r.data),
+    getGroups: (page = 0, size = 100) => http.get(`/v1/groups?page=${page}&size=${size}`).then((r) => r.data),
 };

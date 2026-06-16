@@ -21,7 +21,7 @@ export default function UsuariosPendentes() {
 
   const { data: users = [] as PendingUser[], isLoading: loading, isError } = useQuery({
     queryKey: ['usuarios-pendentes'],
-    queryFn: profilesApi.getPendingUsers,
+    queryFn: () => profilesApi.getPendingUsers()
   });
 
   const approveMutation = useMutation({
@@ -36,9 +36,9 @@ export default function UsuariosPendentes() {
     onError: () => toast.error("Ocorreu um erro ao atualizar o recurso. Por favor, tente novamente."),
   });
 
-  const error = isError ? "Não foi possível carregar os usuários pendentes." : 
-                (approveMutation.isError ? "Erro ao aprovar usuário." : 
-                (rejectMutation.isError ? "Erro ao rejeitar usuário." : ""));
+  const error = isError ? "Não foi possível carregar os usuários pendentes." :
+    (approveMutation.isError ? "Erro ao aprovar usuário." :
+      (rejectMutation.isError ? "Erro ao rejeitar usuário." : ""));
 
   function handleApprove(id: string) {
     setActionId(id);

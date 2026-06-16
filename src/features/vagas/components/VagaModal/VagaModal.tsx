@@ -43,15 +43,17 @@ export function VagaModal({ initial, saving, onSave, onClose }: Props) {
     const selectedProjectId = watch("projectId");
     const selectedSquadId = watch("squadId");
 
-    const { data: projects = [], isLoading: loadingProjects } = useQuery({
+    const { data: projectsData, isLoading: loadingProjects } = useQuery({
         queryKey: ['projects', 'active'],
-        queryFn: vagasApi.getProjects
+        queryFn: () => vagasApi.getProjects(0, 100)
     });
+    const projects = projectsData?.content || [];
 
-    const { data: allSquads = [], isLoading: loadingSquads } = useQuery({
+    const { data: squadsData, isLoading: loadingSquads } = useQuery({
         queryKey: ['squads', 'active'],
-        queryFn: vagasApi.getSquads
+        queryFn: () => vagasApi.getSquads(0, 100)
     });
+    const allSquads = squadsData?.content || [];
 
     const filteredSquads = allSquads.filter((s: any) => s.projectId === selectedProjectId);
 

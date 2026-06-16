@@ -8,3 +8,4 @@ export * from "./Section/Section";
 export * from "./Select/Select";
 export * from "./StatCard/StatCard";
 export * from "./Tag/Tag";
+export * from "./Pagination/Pagination";
