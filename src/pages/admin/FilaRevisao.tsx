@@ -1,19 +1,22 @@
 import { Link } from "react-router-dom";
-import { PageHeader, Badge, Tag, Avatar, Card } from "@/components/ui";
+import { PageHeader, Badge, Tag, Avatar, Card, Pagination } from "@/components/ui";
 import { profilesApi, type UserProfile } from "@/features/profiles";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+
 
 export default function FilaRevisao() {
-  const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
-    queryKey: ['profiles-pendentes'],
-    queryFn: async (): Promise<UserProfile[]> => {
-      const data = await profilesApi.getPendentes();
+  const [page, setPage] = useState(0);
 
-      if (Array.isArray(data)) return data;
-
-      return (data as any)?.content || (data as any)?.data || [];
-    }
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ['profiles-pendentes', page],
+    queryFn: () => profilesApi.getPendentes(page)
   });
+
+  const profiles: UserProfile[] = data?.content || [];
+  const totalPages = data?.totalPages || 1;
+  const totalElements = data?.totalElements || 0;
+
   if (loading) return <p className="text-slate-400 text-sm">Carregando...</p>;
 
   return (
@@ -22,8 +25,8 @@ export default function FilaRevisao() {
         title="Fila de revisão"
         subtitle="Perfis aguardando análise e ativação"
         actions={
-          <Badge variant={profiles.length > 0 ? "pending" : "info"}>
-            {profiles.length} pendente{profiles.length !== 1 ? "s" : ""}
+          <Badge variant={totalElements > 0 ? "pending" : "info"}>
+            {totalElements} pendente{totalElements !== 1 ? "s" : ""}
           </Badge>
         }
       />
@@ -89,6 +92,7 @@ export default function FilaRevisao() {
               )}
             </Link>
           ))}
+          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
         </div>
       )}
     </div>

@@ -23,11 +23,8 @@ export default function Register() {
   const selectedRole = watch("role");
 
   useEffect(() => {
-    authApi.getGroups().then((data) => {
-      const list: Group[] = Array.isArray(data)
-        ? data
-        : (data as any)?.content || (data as any)?.data || [];
-
+    authApi.getGroups(0, 100).then((data) => {
+      const list: Group[] = data?.content || [];
       setGroups(list);
       if (list.length > 0) {
         setValue("groupId", list[0].id);

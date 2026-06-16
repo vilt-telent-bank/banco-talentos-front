@@ -14,9 +14,8 @@ export default function Dashboard() {
 
   const { data: vagasAtivas, isLoading: loadingVagas } = useQuery({
     queryKey: ['dashboard-vagas-ativas'],
-    queryFn: vagasApi.getActive
+    queryFn: () => vagasApi.getActive()
   });
-
   const loading = loadingProfiles || loadingVagas;
 
   if (loading || !stats) return <p className="text-slate-400 text-sm">Carregando...</p>;

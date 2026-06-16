@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { profilesApi } from "../../api/profiles.api";
 import type { UserProfile } from "../../types/profile";
@@ -7,27 +7,35 @@ export function useBancoTalentos() {
     const [search, setSearch] = useState("");
     const [area, setArea] = useState("");
 
-    const { data: profiles = [] as UserProfile[], isLoading: loading } = useQuery({
-        queryKey: ['profiles-ativos'],
-        queryFn: async (): Promise<UserProfile[]> => {
-            const data = await profilesApi.getAtivos();
+    const [page, setPage] = useState(0);
 
-            if (Array.isArray(data)) return data;
-            return (data as any)?.content || (data as any)?.data || [];
-        }
+    const { data, isLoading: loading } = useQuery({
+        queryKey: ['profiles-ativos', page],
+        queryFn: () => profilesApi.getAtivos(page, 20)
     });
 
-    const areas = useMemo(() => Array.from(new Set(profiles.map((p) => p.area).filter(Boolean))), [profiles]);
-    const disponíveis = useMemo(() => profiles.filter((p) => p.allocationStatus === "Disponível (Bench)"), [profiles]);
+    const profiles: UserProfile[] = data?.content || [];
+    const totalPages = data?.totalPages || 1;
+    const totalElements = data?.totalElements || 0;
 
-    const filtered = useMemo(() => disponíveis.filter((p) => {
+    useEffect(() => {
+        setPage(0);
+    }, [search, area]);
+
+    const areas = useMemo(() => Array.from(new Set(profiles.map((p) => p.area).filter(Boolean))), [profiles]);
+    const disponiveis = useMemo(() => profiles.filter((p) => p.allocationStatus === "Disponível (Bench)"), [profiles]);
+
+    const filtered = useMemo(() => disponiveis.filter((p) => {
         const q = search.toLowerCase();
         return (
             (!q || p.name?.toLowerCase().includes(q) || p.area?.toLowerCase().includes(q) ||
                 p.skills?.some((s: any) => (s.skill?.name || s.name)?.toLowerCase().includes(q))) &&
             (!area || p.area === area)
         );
-    }), [disponíveis, search, area]);
+    }), [disponiveis, search, area]);
 
-    return { search, setSearch, area, setArea, areas, filtered, loading };
+    return {
+        search, setSearch, area, setArea, areas, filtered, loading,
+        page, setPage, totalPages, totalElements
+    };
 }
