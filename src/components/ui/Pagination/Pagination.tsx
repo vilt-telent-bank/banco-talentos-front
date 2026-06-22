@@ -13,7 +13,8 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Props) {
     return (
         <div className="flex items-center justify-between pt-4 mt-6 border-t border-slate-200">
             <span className="text-sm text-slate-500">
-                Página <span className="font-medium text-slate-900">{currentPage + 1}</span> de <span className="font-medium text-slate-900">{totalPages}</span>
+                Página <span className="font-medium text-slate-900">{currentPage + 1}</span> de{" "}
+                <span className="font-medium text-slate-900">{totalPages}</span>
             </span>
             <div className="flex items-center gap-2">
                 <Button
