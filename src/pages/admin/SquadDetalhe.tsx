@@ -81,7 +81,7 @@ export default function SquadDetalhe() {
                 <div className="flex-1 w-full bg-white rounded-xl shadow-card border border-slate-200 overflow-hidden">
                     <div className="flex border-b border-slate-200 px-6 pt-2 gap-6 text-sm font-medium overflow-x-auto">
                         <button className={`py-4 whitespace-nowrap outline-none ${activeTab === 'dados' ? 'text-pink border-b-2 border-pink' : 'text-slate-500 hover:text-slate-700'}`} onClick={() => setActiveTab('dados')}>Dados Gerais</button>
-                        <button className={`py-4 whitespace-nowrap outline-none ${activeTab === 'recursos' ? 'text-pink border-b-2 border-pink' : 'text-slate-500 hover:text-slate-700'}`} onClick={() => setActiveTab('recursos')}>Recursos da Squad</button>
+                        {/* <button className={`py-4 whitespace-nowrap outline-none ${activeTab === 'recursos' ? 'text-pink border-b-2 border-pink' : 'text-slate-500 hover:text-slate-700'}`} onClick={() => setActiveTab('recursos')}>Recursos da Squad</button> */}
                     </div>
 
                     <div className="p-6">
