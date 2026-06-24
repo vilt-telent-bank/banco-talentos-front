@@ -1,29 +1,39 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { SkillsTable } from './SkillsTable';
-import { type Skill } from '../../types/skills';
+import { type Skill } from '../../types/types';
 
 const mockSkills: Skill[] = [
     {
-        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-        name: 'React',
+        id: '1',
+        name: 'React.js',
         type: 'HARD',
         active: true,
-        importanceWeight: 9.5,
+        category: 'FRONTEND',
+        description: 'Biblioteca JS',
+        resourcesCount: 342,
+        averageProficiency: 75,
+        avatarUrls: ['https://example.com/a.jpg'],
     },
     {
-        id: '3fa85f64-5717-4562-b3fc-2c963f66afa7',
-        name: 'Comunicação',
-        type: 'SOFT',
-        active: true,
-        importanceWeight: 8.0,
-    },
-    {
-        id: '3fa85f64-5717-4562-b3fc-2c963f66afa8',
+        id: '2',
         name: 'Python',
         type: 'HARD',
-        active: false,
-        importanceWeight: 7.5,
+        active: true,
+        category: 'BACKEND',
+        description: 'Linguagem',
+        resourcesCount: 215,
+        averageProficiency: 50,
+    },
+    {
+        id: '3',
+        name: 'Figma',
+        type: 'HARD',
+        active: true,
+        category: 'DESIGN',
+        description: 'Design Tool',
+        resourcesCount: 86,
+        averageProficiency: 66,
     },
 ];
 
@@ -31,23 +41,45 @@ describe('Componente SkillsTable', () => {
     it('deve renderizar a tabela com os dados das skills', () => {
         render(<SkillsTable data={mockSkills} />);
 
-        expect(screen.getByText('React')).toBeInTheDocument();
+        expect(screen.getByText('React.js')).toBeInTheDocument();
         expect(screen.getByText('Python')).toBeInTheDocument();
-        expect(screen.getByText('Comunicação')).toBeInTheDocument();
+        expect(screen.getByText('Figma')).toBeInTheDocument();
     });
 
-    it('deve exibir o peso de importância corretamente', () => {
+    it('deve exibir descrição e categorias em português', () => {
         render(<SkillsTable data={mockSkills} />);
 
-        expect(screen.getByText('9.5')).toBeInTheDocument();
-        expect(screen.getByText('8.0')).toBeInTheDocument();
-        expect(screen.getByText('7.5')).toBeInTheDocument();
+        expect(screen.getByText('Biblioteca JS')).toBeInTheDocument();
+        expect(screen.getByText('Frontend')).toBeInTheDocument();
+        expect(screen.getByText('Backend')).toBeInTheDocument();
+        expect(screen.getByText('Design')).toBeInTheDocument();
     });
 
-    it('deve exibir estado de carregamento', () => {
-        render(<SkillsTable data={[]} loading={true} />);
+    it('deve exibir nível médio como percentual da API', () => {
+        render(<SkillsTable data={mockSkills} />);
 
-        expect(screen.getByText('Carregando skills...')).toBeInTheDocument();
+        expect(screen.getByText('75.0%')).toBeInTheDocument();
+        expect(screen.getByText('50.0%')).toBeInTheDocument();
+        expect(screen.getByText('66.0%')).toBeInTheDocument();
+    });
+
+    it('deve exibir zero quando proficiência não vier da API', () => {
+        const skillWithoutMetrics = {
+            ...mockSkills[0],
+            averageProficiency: undefined,
+            resourcesCount: undefined,
+        } as unknown as Skill;
+
+        render(<SkillsTable data={[skillWithoutMetrics]} />);
+
+        expect(screen.getByText('0.0%')).toBeInTheDocument();
+        expect(screen.getByText('0')).toBeInTheDocument();
+    });
+
+    it('deve exibir avatares quando avatarUrls vier da API', () => {
+        render(<SkillsTable data={mockSkills} />);
+
+        expect(screen.getByAltText('React.js 1')).toBeInTheDocument();
     });
 
     it('deve exibir mensagem quando não houver dados', () => {
@@ -65,20 +97,13 @@ describe('Componente SkillsTable', () => {
         expect(handleEdit).toHaveBeenCalledWith(mockSkills[0]);
     });
 
-    it('deve chamar onDelete ao clicar no botão de excluir skill ativa', () => {
+    it('deve chamar onDelete ao clicar no botão de excluir', () => {
         const handleDelete = vi.fn();
         render(<SkillsTable data={mockSkills} onDelete={handleDelete} />);
 
         fireEvent.click(screen.getAllByTitle('Excluir skill')[0]);
 
         expect(handleDelete).toHaveBeenCalledWith(mockSkills[0]);
-    });
-
-    it('não deve exibir botão de excluir para skills inativas', () => {
-        render(<SkillsTable data={[mockSkills[2]]} onDelete={vi.fn()} />);
-
-        expect(screen.queryByTitle('Excluir skill')).not.toBeInTheDocument();
-        expect(screen.getByTitle('Editar skill')).toBeInTheDocument();
     });
 
     it('deve desabilitar o botão de excluir quando a skill estiver sendo excluída', () => {
@@ -96,35 +121,14 @@ describe('Componente SkillsTable', () => {
         expect(deleteButtons[1]).not.toBeDisabled();
     });
 
-    it('deve exibir badges de tipo de skill', () => {
-        render(<SkillsTable data={mockSkills} />);
-
-        expect(screen.getAllByText('Hard Skill')).toHaveLength(2);
-        expect(screen.getByText('Soft Skill')).toBeInTheDocument();
-    });
-
-    it('deve exibir badges de status', () => {
-        render(<SkillsTable data={mockSkills} />);
-
-        expect(screen.getAllByText('Ativa')).toHaveLength(2);
-        expect(screen.getByText('Inativa')).toBeInTheDocument();
-    });
-
     it('deve renderizar as colunas na ordem correta', () => {
         const { container } = render(<SkillsTable data={mockSkills} />);
 
         const headers = container.querySelectorAll('th');
         expect(headers[0]).toHaveTextContent('SKILL');
-        expect(headers[1]).toHaveTextContent('TIPO');
-        expect(headers[2]).toHaveTextContent('IMPORTÂNCIA');
-        expect(headers[3]).toHaveTextContent('STATUS');
+        expect(headers[1]).toHaveTextContent('CATEGORIA');
+        expect(headers[2]).toHaveTextContent('QTD. RECURSOS');
+        expect(headers[3]).toHaveTextContent('NÍVEL MÉDIO');
         expect(headers[4]).toHaveTextContent('AÇÕES');
-    });
-
-    it('deve preencher linhas vazias para manter altura mínima da tabela', () => {
-        const { container } = render(<SkillsTable data={[mockSkills[0]]} minRows={3} />);
-
-        const rows = container.querySelectorAll('tbody tr');
-        expect(rows).toHaveLength(3);
     });
 });

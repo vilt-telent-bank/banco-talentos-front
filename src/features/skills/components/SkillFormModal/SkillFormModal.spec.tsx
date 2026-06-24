@@ -13,7 +13,13 @@ describe('Componente SkillFormModal', () => {
     it('deve renderizar o cabeçalho de Editar Skill quando um ID inicial for fornecido', () => {
         render(
             <SkillFormModal
-                initial={{ id: 'skill-1', name: 'React', type: 'HARD', importanceWeight: 8 }}
+                initial={{
+                    id: 'skill-1',
+                    name: 'React',
+                    type: 'HARD',
+                    category: 'FRONTEND',
+                    description: 'Biblioteca JS',
+                }}
                 saving={false}
                 onSave={vi.fn()}
                 onClose={vi.fn()}
@@ -38,6 +44,29 @@ describe('Componente SkillFormModal', () => {
 
         expect(screen.getByText('Nome da skill é obrigatório')).toBeInTheDocument();
         expect(screen.getByText('Tipo é obrigatório')).toBeInTheDocument();
+        expect(screen.getByText('Categoria é obrigatória')).toBeInTheDocument();
+    });
+
+    it('deve exibir erro ao tentar cadastrar skill com nome duplicado', async () => {
+        render(
+            <SkillFormModal
+                initial={{}}
+                existingSkills={[{ id: '1', name: 'React' }]}
+                saving={false}
+                onSave={vi.fn()}
+                onClose={vi.fn()}
+            />
+        );
+
+        const nameInput = screen.getByPlaceholderText(/Ex: Kubernetes, Lógica de Programação/);
+        const selects = screen.getAllByRole('combobox');
+
+        await userEvent.type(nameInput, 'React');
+        await userEvent.selectOptions(selects[0], 'HARD');
+        await userEvent.selectOptions(selects[1], 'FRONTEND');
+        await userEvent.click(screen.getByRole('button', { name: 'Salvar Skill' }));
+
+        expect(screen.getByText('Já existe uma skill com este nome')).toBeInTheDocument();
     });
 
     it('deve chamar onSave com os dados corretos quando o formulário for válido', async () => {
@@ -45,16 +74,18 @@ describe('Componente SkillFormModal', () => {
         render(<SkillFormModal initial={{}} saving={false} onSave={handleSave} onClose={vi.fn()} />);
 
         const nameInput = screen.getByPlaceholderText(/Ex: Kubernetes, Lógica de Programação/);
-        const typeSelect = screen.getByRole('combobox');
+        const selects = screen.getAllByRole('combobox');
 
         await userEvent.type(nameInput, 'React');
-        await userEvent.selectOptions(typeSelect, 'HARD');
+        await userEvent.selectOptions(selects[0], 'HARD');
+        await userEvent.selectOptions(selects[1], 'FRONTEND');
         await userEvent.click(screen.getByRole('button', { name: 'Salvar Skill' }));
 
         expect(handleSave).toHaveBeenCalledWith({
             name: 'React',
             type: 'HARD',
-            importanceWeight: 5,
+            category: 'FRONTEND',
+            description: undefined,
         });
     });
 
@@ -75,7 +106,13 @@ describe('Componente SkillFormModal', () => {
     it('deve preencher os campos ao editar uma skill', () => {
         render(
             <SkillFormModal
-                initial={{ id: '1', name: 'React', type: 'HARD', importanceWeight: 8 }}
+                initial={{
+                    id: '1',
+                    name: 'React',
+                    type: 'HARD',
+                    category: 'FRONTEND',
+                    description: 'Biblioteca JS',
+                }}
                 saving={false}
                 onSave={vi.fn()}
                 onClose={vi.fn()}

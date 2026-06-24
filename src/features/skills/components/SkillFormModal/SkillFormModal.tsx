@@ -1,8 +1,15 @@
+import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui";
-import { type CreateSkillPayload } from "../../types/skills";
-import { skillSchema, type SkillFormData, type SkillFormInput } from "../../validations/validations";
+import { SKILL_CATEGORIES, type Skill, type SkillPayload } from "../../types/types";
+import { getSkillCategoryLabel } from "../../utils/skillDisplay";
+import {
+    createSkillSchema,
+    skillSchema,
+    type SkillFormData,
+    type SkillFormInput,
+} from "../../validations/validations";
 
 const inputCls =
     "w-full font-sans text-base rounded-lg px-3.5 py-2.5 outline-none transition-all bg-white border border-slate-300 focus:border-pink focus:shadow-focus-pink text-slate-900 placeholder:text-slate-400";
@@ -20,34 +27,44 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 }
 
 interface Props {
-    initial: Partial<CreateSkillPayload> & { id?: string };
+    initial: Partial<SkillPayload> & { id?: string };
+    existingSkills?: Pick<Skill, "id" | "name">[];
     saving: boolean;
-    onSave: (data: CreateSkillPayload & { id?: string }) => void;
+    onSave: (data: SkillPayload & { id?: string }) => void;
     onClose: () => void;
 }
 
-export function SkillFormModal({ initial, saving, onSave, onClose }: Props) {
+export function SkillFormModal({ initial, existingSkills = [], saving, onSave, onClose }: Props) {
     const isEdit = Boolean(initial.id);
+
+    const schema = useMemo(
+        () => createSkillSchema(existingSkills, initial.id),
+        [existingSkills, initial.id],
+    );
 
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors },
     } = useForm<SkillFormInput>({
-        resolver: zodResolver(skillSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
             name: initial.name || "",
             type: initial.type || "",
-            importanceWeight: initial.importanceWeight ?? 5,
+            description: initial.description || "",
+            category: initial.category || "",
         },
     });
 
-    const importanceWeight = watch("importanceWeight");
-
     function onSubmit(data: SkillFormInput) {
         const parsed: SkillFormData = skillSchema.parse(data);
-        onSave({ ...parsed, id: initial.id });
+        onSave({
+            name: parsed.name,
+            type: parsed.type,
+            description: parsed.description || undefined,
+            category: parsed.category,
+            id: initial.id,
+        });
     }
 
     return (
@@ -91,22 +108,35 @@ export function SkillFormModal({ initial, saving, onSave, onClose }: Props) {
                                 {...register("type")}
                             >
                                 <option value="">Selecione o tipo</option>
-                                <option value="HARD">Hard Skill</option>
-                                <option value="SOFT">Soft Skill</option>
+                                <option value="HARD">HARD</option>
+                                <option value="SOFT">SOFT</option>
                             </select>
                             <ErrorMsg msg={errors.type?.message} />
                         </Field>
 
-                        <Field label={`Importância (${importanceWeight})`}>
-                            <input
-                                type="range"
-                                min="0"
-                                max="10"
-                                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-pink"
-                                {...register("importanceWeight")}
+                        <Field label="Categoria">
+                            <select
+                                className={`${inputCls} ${errors.category ? "border-red-400" : ""}`}
+                                {...register("category")}
+                            >
+                                <option value="">Selecione a categoria</option>
+                                {SKILL_CATEGORIES.map((category) => (
+                                    <option key={category} value={category}>
+                                        {getSkillCategoryLabel(category)}
+                                    </option>
+                                ))}
+                            </select>
+                            <ErrorMsg msg={errors.category?.message} />
+                        </Field>
+
+                        <Field label="Descrição (opcional)">
+                            <textarea
+                                className={`${inputCls} resize-none ${errors.description ? "border-red-400" : ""}`}
+                                rows={3}
+                                placeholder="Descreva a competência..."
+                                {...register("description")}
                             />
-                            <p className="text-xs text-slate-500">0 (baixa) a 10 (alta)</p>
-                            <ErrorMsg msg={errors.importanceWeight?.message} />
+                            <ErrorMsg msg={errors.description?.message} />
                         </Field>
                     </div>
 
