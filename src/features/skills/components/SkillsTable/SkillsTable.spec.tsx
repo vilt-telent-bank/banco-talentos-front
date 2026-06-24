@@ -92,7 +92,7 @@ describe('Componente SkillsTable', () => {
         const handleEdit = vi.fn();
         render(<SkillsTable data={mockSkills} onEdit={handleEdit} />);
 
-        fireEvent.click(screen.getAllByTitle('Editar skill')[0]);
+        fireEvent.click(screen.getAllByRole('button', { name: 'Editar skill' })[0]);
 
         expect(handleEdit).toHaveBeenCalledWith(mockSkills[0]);
     });
@@ -101,7 +101,7 @@ describe('Componente SkillsTable', () => {
         const handleDelete = vi.fn();
         render(<SkillsTable data={mockSkills} onDelete={handleDelete} />);
 
-        fireEvent.click(screen.getAllByTitle('Excluir skill')[0]);
+        fireEvent.click(screen.getAllByRole('button', { name: 'Excluir skill' })[0]);
 
         expect(handleDelete).toHaveBeenCalledWith(mockSkills[0]);
     });
@@ -115,7 +115,7 @@ describe('Componente SkillsTable', () => {
             />
         );
 
-        const deleteButtons = screen.getAllByTitle('Excluir skill');
+        const deleteButtons = screen.getAllByRole('button', { name: 'Excluir skill' });
 
         expect(deleteButtons[0]).toBeDisabled();
         expect(deleteButtons[1]).not.toBeDisabled();

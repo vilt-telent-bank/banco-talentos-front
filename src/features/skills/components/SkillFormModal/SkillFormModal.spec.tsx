@@ -10,6 +10,15 @@ describe('Componente SkillFormModal', () => {
         expect(screen.getByRole('button', { name: 'Salvar Skill' })).toBeInTheDocument();
     });
 
+    it('deve renderizar os campos do formulário com labels', () => {
+        render(<SkillFormModal initial={{}} saving={false} onSave={vi.fn()} onClose={vi.fn()} />);
+
+        expect(screen.getByText('Nome da Skill')).toBeInTheDocument();
+        expect(screen.getByText('Tipo')).toBeInTheDocument();
+        expect(screen.getByText('Categoria')).toBeInTheDocument();
+        expect(screen.getByText('Descrição (opcional)')).toBeInTheDocument();
+    });
+
     it('deve renderizar o cabeçalho de Editar Skill quando um ID inicial for fornecido', () => {
         render(
             <SkillFormModal
@@ -122,6 +131,10 @@ describe('Componente SkillFormModal', () => {
         const nameInput = screen.getByPlaceholderText(
             /Ex: Kubernetes, Lógica de Programação/
         ) as HTMLInputElement;
+        const selects = screen.getAllByRole('combobox') as HTMLSelectElement[];
+
         expect(nameInput.value).toBe('React');
+        expect(selects[0].value).toBe('HARD');
+        expect(selects[1].value).toBe('FRONTEND');
     });
 });
