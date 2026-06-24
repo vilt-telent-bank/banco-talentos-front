@@ -156,7 +156,7 @@ export default function Skills() {
                     <p className="text-slate-400 text-sm">Nenhuma skill encontrada.</p>
                 </div>
             ) : (
-                <div className="bg-white border border-slate-200 rounded-xl shadow-card p-6 flex flex-col gap-4">
+                <div className="bg-white border border-slate-200 rounded-xl shadow-card overflow-hidden flex flex-col">
                     <SkillsTable
                         data={paginatedSkills}
                         deletingSkillId={
@@ -167,6 +167,7 @@ export default function Skills() {
                     />
 
                     <Pagination
+                        className="mt-0 py-4 px-4 border-t-0"
                         currentPage={page}
                         totalPages={totalPages}
                         onPageChange={setPage}
