@@ -1,28 +1,25 @@
 import { useState, useMemo, useEffect } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Search } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { Button, ConfirmModal, PageHeader, Select, Pagination } from "@/components/ui";
 import {
     skillsApi,
     SkillFormModal,
     SkillsTable,
-    type CreateSkillPayload,
+    SKILL_CATEGORIES,
+    normalizeSkills,
+    getSkillCategoryLabel,
     type Skill,
+    type SkillPayload,
 } from "@/features/skills";
-import { useSkillsQuery } from "@/features/skills/hooks/useSkillsQuery";
+import { Button, ConfirmModal, PageHeader, Pagination, Select } from "@/components/ui";
 
-function toSkillPayload(data: CreateSkillPayload & { id?: string }): CreateSkillPayload {
-    return {
-        name: data.name,
-        type: data.type,
-        importanceWeight: data.importanceWeight,
-    };
-}
-
-const SKILL_TYPE_OPTIONS = [
-    { value: "", label: "Todos os tipos" },
-    { value: "HARD", label: "Hard Skill" },
-    { value: "SOFT", label: "Soft Skill" },
+const CATEGORY_FILTER_OPTIONS = [
+    { value: "", label: "Todas as Categorias" },
+    ...SKILL_CATEGORIES.map((category) => ({
+        value: category,
+        label: getSkillCategoryLabel(category),
+    })),
 ];
 
 const PAGE_SIZE = 10;
@@ -30,24 +27,48 @@ const PAGE_SIZE = 10;
 export default function Skills() {
     const queryClient = useQueryClient();
     const [modalOpen, setModalOpen] = useState(false);
-    const [editing, setEditing] = useState<(Partial<CreateSkillPayload> & { id?: string }) | null>(null);
+    const [editing, setEditing] = useState<(Partial<SkillPayload> & { id?: string }) | null>(null);
     const [skillToDelete, setSkillToDelete] = useState<Skill | null>(null);
-    const [viewActive, setViewActive] = useState(true);
     const [search, setSearch] = useState("");
-    const [selectedType, setSelectedType] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
     const [page, setPage] = useState(0);
 
     useEffect(() => {
         setPage(0);
-    }, [viewActive, search, selectedType]);
+    }, [search, selectedCategory]);
 
-    const { data: skills = [], isLoading } = useSkillsQuery(!viewActive);
+    const { data, isLoading } = useQuery({
+        queryKey: ["skills", "active"],
+        queryFn: async () => {
+            const response = await skillsApi.getActiveSkills(0, 500);
+            return {
+                ...response,
+                content: normalizeSkills(response.content ?? []),
+            };
+        },
+    });
+
+    const { data: allSkills = [] } = useQuery({
+        queryKey: ["skills", "all"],
+        enabled: modalOpen,
+        queryFn: async () => {
+            const [active, inactive] = await Promise.all([
+                skillsApi.getActiveSkills(0, 500),
+                skillsApi.getInactiveSkills(0, 500),
+            ]);
+
+            return normalizeSkills([
+                ...(active.content ?? []),
+                ...(inactive.content ?? []),
+            ]);
+        },
+    });
+
+    const skills = data?.content ?? [];
 
     const saveMutation = useMutation({
-        mutationFn: async (data: CreateSkillPayload & { id?: string }) => {
-            const payload = toSkillPayload(data);
-            return data.id ? skillsApi.update(data.id, payload) : skillsApi.create(payload);
-        },
+        mutationFn: async (payload: SkillPayload & { id?: string }) =>
+            payload.id ? skillsApi.update(payload.id, payload) : skillsApi.create(payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["skills"] });
             closeModal();
@@ -72,11 +93,15 @@ export default function Skills() {
 
     const filteredSkills = useMemo(() => {
         return skills.filter((skill) => {
-            const matchesSearch = skill.name.toLowerCase().includes(search.toLowerCase());
-            const matchesType = !selectedType || skill.type === selectedType;
-            return matchesSearch && matchesType;
+            const q = search.toLowerCase();
+            const matchesSearch =
+                !q ||
+                skill.name.toLowerCase().includes(q) ||
+                (skill.description?.toLowerCase() || "").includes(q);
+            const matchesCategory = !selectedCategory || skill.category === selectedCategory;
+            return matchesSearch && matchesCategory;
         });
-    }, [skills, search, selectedType]);
+    }, [skills, search, selectedCategory]);
 
     const totalPages = Math.ceil(filteredSkills.length / PAGE_SIZE) || 1;
     const paginatedSkills = filteredSkills.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE);
@@ -91,7 +116,8 @@ export default function Skills() {
             id: skill.id,
             name: skill.name,
             type: skill.type,
-            importanceWeight: skill.importanceWeight,
+            description: skill.description,
+            category: skill.category,
         });
         setModalOpen(true);
     }
@@ -103,12 +129,8 @@ export default function Skills() {
 
     function handleClearFilters() {
         setSearch("");
-        setSelectedType("");
+        setSelectedCategory("");
         setPage(0);
-    }
-
-    function handleDeleteClick(skill: Skill) {
-        setSkillToDelete(skill);
     }
 
     function confirmDelete() {
@@ -129,40 +151,43 @@ export default function Skills() {
                 }
             />
 
-            <div className="bg-white border border-slate-200 rounded-xl shadow-card px-5 py-4 flex items-center gap-4 flex-wrap">
-                <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+            <div className="bg-white border border-slate-200 rounded-xl shadow-card px-5 py-4">
+                <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+                    <div className="flex-1 min-w-[220px]">
+                        <label className="block text-[11px] font-semibold tracking-wide text-slate-500 mb-1.5">
+                            NOME DA SKILL
+                        </label>
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                placeholder="Ex: React, Python, Scrum..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="w-full text-sm border border-slate-300 rounded-lg pl-9 pr-3 py-2.5 outline-none focus:border-pink focus:shadow-focus-pink"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="w-full lg:w-56">
+                        <label className="block text-[11px] font-semibold tracking-wide text-slate-500 mb-1.5">
+                            CATEGORIA
+                        </label>
+                        <Select
+                            className="px-3.5 py-2.5 text-sm w-full border border-slate-300 rounded-lg focus:ring-pink focus:border-pink focus:shadow-focus-pink"
+                            options={CATEGORY_FILTER_OPTIONS}
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                        />
+                    </div>
+
                     <button
-                        onClick={() => setViewActive(true)}
-                        className={`px-4 py-1.5 rounded-md text-xs font-semibold ${viewActive ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
+                        type="button"
+                        onClick={handleClearFilters}
+                        className="text-sm font-medium text-slate-500 hover:text-pink transition-colors pb-2.5"
                     >
-                        Ativas
-                    </button>
-                    <button
-                        onClick={() => setViewActive(false)}
-                        className={`px-4 py-1.5 rounded-md text-xs font-semibold ${!viewActive ? "bg-white text-slate-900 shadow-sm" : "text-slate-500"}`}
-                    >
-                        Inativas
+                        Limpar Filtros
                     </button>
                 </div>
-                <div className="flex-1 min-w-[200px]">
-                    <input
-                        placeholder="Ex: React, Python, Scrum..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="w-full text-sm border border-slate-300 rounded-md px-3 py-2 outline-none focus:border-pink focus:shadow-focus-pink"
-                    />
-                </div>
-                <div className="w-48">
-                    <Select
-                        className="px-3.5 py-2 text-sm w-full border border-slate-300 rounded-lg focus:ring-pink focus:border-pink focus:shadow-focus-pink"
-                        options={SKILL_TYPE_OPTIONS}
-                        value={selectedType}
-                        onChange={(e) => setSelectedType(e.target.value)}
-                    />
-                </div>
-                <Button variant="secondary" size="sm" onClick={handleClearFilters}>
-                    Limpar filtros
-                </Button>
             </div>
 
             {isLoading ? (
@@ -172,25 +197,28 @@ export default function Skills() {
                     <p className="text-slate-400 text-sm">Nenhuma skill encontrada.</p>
                 </div>
             ) : (
-                <>
-                    <div className="bg-white border border-slate-200 rounded-xl shadow-card p-6">
-                        <SkillsTable
-                            data={paginatedSkills}
-                            deletingSkillId={
-                                deleteMutation.isPending ? (deleteMutation.variables ?? null) : null
-                            }
-                            onEdit={openEdit}
-                            onDelete={handleDeleteClick}
-                        />
-                    </div>
+                <div className="bg-white border border-slate-200 rounded-xl shadow-card p-6 flex flex-col gap-4">
+                    <SkillsTable
+                        data={paginatedSkills}
+                        deletingSkillId={
+                            deleteMutation.isPending ? (deleteMutation.variables ?? null) : null
+                        }
+                        onEdit={openEdit}
+                        onDelete={setSkillToDelete}
+                    />
 
-                    <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
-                </>
+                    <Pagination
+                        currentPage={page}
+                        totalPages={totalPages}
+                        onPageChange={setPage}
+                    />
+                </div>
             )}
 
             {modalOpen && editing && (
                 <SkillFormModal
                     initial={editing}
+                    existingSkills={allSkills}
                     saving={saveMutation.isPending}
                     onSave={(data) => saveMutation.mutate(data)}
                     onClose={closeModal}
