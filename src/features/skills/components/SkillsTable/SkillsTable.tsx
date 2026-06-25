@@ -12,8 +12,6 @@ interface Props {
     onDelete?: (skill: Skill) => void;
 }
 
-const columnCls = "w-1/5 px-6 py-3";
-const iconButtonCls = "border-0 shadow-none !p-2 min-w-0";
 const MAX_VISIBLE_AVATARS = 2;
 
 function getResourcesTotal(skill: Skill) {
@@ -35,9 +33,7 @@ function ResourcesCell({ skill }: { skill: Skill }) {
 
     return (
         <div className="flex items-center gap-2.5">
-            <span className="text-sm font-semibold text-slate-900 tabular-nums shrink-0">
-                {total}
-            </span>
+            <span className="font-semibold text-slate-900 tabular-nums shrink-0">{total}</span>
 
             {(visibleAvatars.length > 0 || showMore) && (
                 <div className="flex items-center -space-x-2">
@@ -72,37 +68,32 @@ function formatAverageProficiency(value?: number) {
 export function SkillsTable({ data, deletingSkillId, onEdit, onDelete }: Props) {
     const columns = [
         {
-            header: "SKILL",
+            header: "Skill",
             render: (skill: Skill) => (
                 <div className="min-w-0">
-                    <p className="font-semibold text-slate-900 truncate">{skill.name}</p>
-                    <p className="text-[11px] font-medium text-slate-400 truncate">
+                    <p className="font-bold text-slate-900 truncate">{skill.name}</p>
+                    <p className="text-xs text-slate-500 truncate mt-0.5">
                         {skill.description || skill.type}
                     </p>
                 </div>
             ),
-            className: columnCls,
         },
         {
-            header: "CATEGORIA",
+            header: "Categoria",
             render: (skill: Skill) => <SkillCategoryBadge category={skill.category} />,
-            className: columnCls,
         },
         {
-            header: "QTD. RECURSOS",
+            header: "Qtd. Recursos",
             render: (skill: Skill) => <ResourcesCell skill={skill} />,
-            className: columnCls,
         },
         {
-            header: "NÍVEL MÉDIO",
+            header: "Nível Médio",
             render: (skill: Skill) => {
                 const proficiency = skill.averageProficiency ?? 0;
 
                 return (
                     <div className="flex flex-col gap-1.5 max-w-[180px]">
-                        <span className="text-sm text-slate-700">
-                            {formatAverageProficiency(skill.averageProficiency)}
-                        </span>
+                        <span>{formatAverageProficiency(skill.averageProficiency)}</span>
                         <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
                             <div
                                 className="h-full rounded-full bg-pink transition-[width] duration-500"
@@ -112,18 +103,18 @@ export function SkillsTable({ data, deletingSkillId, onEdit, onDelete }: Props) 
                     </div>
                 );
             },
-            className: columnCls,
         },
         {
-            header: "AÇÕES",
+            header: "Ações",
+            className: "text-right",
             render: (skill: Skill) => (
-                <div className="flex items-center justify-end gap-1">
+                <div className="flex items-center justify-end gap-2">
                     <Button
                         type="button"
                         variant="secondary"
                         size="sm"
                         onClick={() => onEdit?.(skill)}
-                        className={`${iconButtonCls} text-slate-400 hover:text-slate-700 hover:bg-slate-100`}
+                        className="min-w-0 border-0 bg-slate-50 p-1.5 shadow-none font-normal rounded-md text-slate-400 hover:text-pink hover:bg-pink/10 active:scale-100 focus-visible:shadow-none"
                         title="Editar skill"
                         aria-label="Editar skill"
                     >
@@ -131,11 +122,11 @@ export function SkillsTable({ data, deletingSkillId, onEdit, onDelete }: Props) 
                     </Button>
                     <Button
                         type="button"
-                        variant="danger"
+                        variant="secondary"
                         size="sm"
                         onClick={() => onDelete?.(skill)}
                         disabled={deletingSkillId === skill.id}
-                        className={iconButtonCls}
+                        className="min-w-0 border-0 bg-slate-50 p-1.5 shadow-none font-normal rounded-md text-slate-400 hover:text-red-600 hover:bg-red-50 active:scale-100 focus-visible:shadow-none disabled:hover:bg-slate-50 disabled:hover:text-slate-400"
                         title="Excluir skill"
                         aria-label="Excluir skill"
                     >
@@ -143,13 +134,11 @@ export function SkillsTable({ data, deletingSkillId, onEdit, onDelete }: Props) 
                     </Button>
                 </div>
             ),
-            className: `${columnCls} text-right`,
         },
     ];
 
     return (
-        <Table<Skill>
-            className="table-fixed"
+        <Table
             columns={columns}
             data={data}
             keyExtractor={(skill) => skill.id}

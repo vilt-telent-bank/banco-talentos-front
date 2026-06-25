@@ -130,7 +130,7 @@ export default function Skills() {
                 title="Consulta de Skills"
                 subtitle="Catálogo de competências técnicas e comportamentais"
                 actions={
-                    <Button variant="primary" size="sm" onClick={openNew}>
+                    <Button variant="primary" size="md" onClick={openNew}>
                         + Cadastrar Skill
                     </Button>
                 }
