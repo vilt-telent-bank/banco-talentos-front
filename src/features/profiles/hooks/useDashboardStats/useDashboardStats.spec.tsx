@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor, act } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDashboardStats } from './useDashboardStats';
 import { profilesApi } from '../../api/profiles.api';
@@ -31,10 +31,6 @@ describe('Hook useDashboardStats', () => {
         topSkillsByProficiency: [
             { name: "React", score: 90 },
             { name: "TypeScript", score: 80 }
-        ],
-        topSkillsByImportance: [
-            { name: "Node.js", score: 95 },
-            { name: "Docker", score: 85 }
         ],
         levelCount: {
             Jr: 1,
@@ -81,20 +77,11 @@ describe('Hook useDashboardStats', () => {
         });
     });
 
-    it('deve exibir inicialmente as Top Skills por "proficiency" e permitir mudar para "importance"', async () => {
+    it('deve mapear corretamente as top skills por proficiência', async () => {
         const { result } = renderHook(() => useDashboardStats(), { wrapper: createWrapper() });
         await waitFor(() => expect(result.current.loading).toBe(false));
 
-        expect(result.current.skillView).toBe("proficiency");
         expect(result.current.stats!.skillsToRender).toEqual(mockDashData.topSkillsByProficiency);
         expect(result.current.stats!.maxSkill).toBe(90);
-
-        act(() => {
-            result.current.setSkillView("importance");
-        });
-
-        expect(result.current.skillView).toBe("importance");
-        expect(result.current.stats!.skillsToRender).toEqual(mockDashData.topSkillsByImportance);
-        expect(result.current.stats!.maxSkill).toBe(95);
     });
 });

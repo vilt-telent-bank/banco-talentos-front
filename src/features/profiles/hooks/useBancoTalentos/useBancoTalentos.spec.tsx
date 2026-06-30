@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { MemoryRouter } from 'react-router-dom';
 import { useBancoTalentos } from './useBancoTalentos';
 import { profilesApi } from '../../api/profiles.api';
 
@@ -15,8 +16,8 @@ const wrapperFactory = () => {
         defaultOptions: { queries: { retry: false } }
     });
     return ({ children }: { children: React.ReactNode }) => (
-        <QueryClientProvider client={queryClient} >
-            {children}
+        <QueryClientProvider client={queryClient}>
+            <MemoryRouter>{children}</MemoryRouter>
         </QueryClientProvider>
     );
 };
