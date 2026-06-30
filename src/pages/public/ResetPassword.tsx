@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +16,7 @@ export default function ResetPassword() {
   const email = params.get("email") ?? "";
   const token = params.get("token") ?? "";
   const hasParams = Boolean(email && token);
+  const [passwordFieldsReady, setPasswordFieldsReady] = useState(false);
 
   const { isLoading: isValidating, isError: isTokenInvalid } = useQuery({
     queryKey: ["validate-reset-token", email, token],
@@ -32,6 +34,13 @@ export default function ResetPassword() {
       confirm: "",
     },
   });
+
+  const passwordRegister = register("password");
+  const confirmRegister = register("confirm");
+
+  function enablePasswordFields() {
+    setPasswordFieldsReady(true);
+  }
 
   const resetMutation = useMutation({
     mutationFn: (data: ResetPasswordFormData) =>
@@ -83,10 +92,40 @@ export default function ResetPassword() {
       <h1 className="text-lg font-bold text-slate-900 mb-1">Nova senha</h1>
       <p className="text-sm text-slate-400 mb-7">Defina uma nova senha para sua conta.</p>
 
-      <form onSubmit={handleSubmit((data) => resetMutation.mutate(data))} className="flex flex-col gap-4">
-        <Input label="E-mail" type="email" readOnly className="bg-slate-50 cursor-not-allowed text-slate-500" {...register("email")} />
-        <Input label="Nova senha" type="password" placeholder="Ex: Senha@123" autoFocus {...register("password")} error={errors.password?.message} />
-        <Input label="Confirmar senha" type="password" placeholder="••••••••" {...register("confirm")} error={errors.confirm?.message} />
+      <form
+        onSubmit={handleSubmit((data) => resetMutation.mutate(data))}
+        className="flex flex-col gap-4"
+        autoComplete="off"
+      >
+        <Input
+          label="E-mail"
+          type="email"
+          readOnly
+          className="bg-slate-50 cursor-not-allowed text-slate-500"
+          autoComplete="off"
+          {...register("email")}
+        />
+        <Input
+          label="Nova senha"
+          type="password"
+          placeholder="Ex: Senha@123"
+          autoFocus
+          autoComplete="new-password"
+          readOnly={!passwordFieldsReady}
+          {...passwordRegister}
+          onFocus={() => enablePasswordFields()}
+          error={errors.password?.message}
+        />
+        <Input
+          label="Confirmar senha"
+          type="password"
+          placeholder="••••••••"
+          autoComplete="new-password"
+          readOnly={!passwordFieldsReady}
+          {...confirmRegister}
+          onFocus={() => enablePasswordFields()}
+          error={errors.confirm?.message}
+        />
 
         {submitError && (
           <p className="rounded-lg px-3 py-2 text-xs bg-red-50 text-red-600 border border-red-100">{submitError}</p>
